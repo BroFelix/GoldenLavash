@@ -73,16 +73,16 @@ class Estimate {
   });
 
   int id;
-  DateTime created;
+  String created;
   int weekNumb;
   String docNumb;
-  DateTime docDateStart;
-  DateTime docDateEnd;
+  String docDateStart;
+  String docDateEnd;
   int status;
   int directorStatus;
-  DateTime directorStatusDate;
+  String directorStatusDate;
   int counterStatus;
-  DateTime counterStatusDate;
+  String counterStatusDate;
   int user;
   int company;
   int directorUser;
@@ -90,16 +90,16 @@ class Estimate {
 
   Estimate copyWith({
     int id,
-    DateTime created,
+    String created,
     int weekNumb,
     String docNumb,
-    DateTime docDateStart,
-    DateTime docDateEnd,
+    String docDateStart,
+    String docDateEnd,
     int status,
     int directorStatus,
-    DateTime directorStatusDate,
+    String directorStatusDate,
     int counterStatus,
-    DateTime counterStatusDate,
+    String counterStatusDate,
     int user,
     int company,
     int directorUser,
@@ -125,20 +125,20 @@ class Estimate {
 
   factory Estimate.fromJson(Map<String, dynamic> json) => Estimate(
         id: json["id"],
-        created: DateTime.parse(json["created"]),
+        created: (json["created"]),
         weekNumb: json["week_numb"],
         docNumb: json["doc_numb"],
-        docDateStart: DateTime.parse(json["doc_date_start"]),
-        docDateEnd: DateTime.parse(json["doc_date_end"]),
+        docDateStart: (json["doc_date_start"]),
+        docDateEnd: (json["doc_date_end"]),
         status: json["status"],
         directorStatus: json["director_status"],
         directorStatusDate: json["director_status_date"] == null
             ? null
-            : DateTime.parse(json["director_status_date"]),
+            : (json["director_status_date"]),
         counterStatus: json["counter_status"],
         counterStatusDate: json["counter_status_date"] == null
             ? null
-            : DateTime.parse(json["counter_status_date"]),
+            : (json["counter_status_date"]),
         user: json["user"],
         company: json["company"],
         directorUser:
@@ -148,20 +148,18 @@ class Estimate {
 
   Map<String, dynamic> toJson() => {
         "id": id,
-        "created": created.toIso8601String(),
+        "created": created,
         "week_numb": weekNumb,
         "doc_numb": docNumb,
-        "doc_date_start": docDateStart.toIso8601String(),
-        "doc_date_end": docDateEnd.toIso8601String(),
+        "doc_date_start": docDateStart,
+        "doc_date_end": docDateEnd,
         "status": status,
         "director_status": directorStatus,
-        "director_status_date": directorStatusDate == null
-            ? null
-            : directorStatusDate.toIso8601String(),
+        "director_status_date":
+            directorStatusDate == null ? null : directorStatusDate,
         "counter_status": counterStatus,
-        "counter_status_date": counterStatusDate == null
-            ? null
-            : counterStatusDate.toIso8601String(),
+        "counter_status_date":
+            counterStatusDate == null ? null : counterStatusDate,
         "user": user,
         "company": company,
         "director_user": directorUser == null ? null : directorUser,

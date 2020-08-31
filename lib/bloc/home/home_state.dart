@@ -1,10 +1,9 @@
 import 'package:equatable/equatable.dart';
 import 'package:meta/meta.dart';
-import 'package:golden_app/models/estimate.dart';
 
 @immutable
-abstract class HomeState {
-  const HomeState();
+abstract class HomeState extends Equatable {
+  HomeState([List props = const []]) : super();
 
   @override
   List<Object> get props => [];
@@ -18,21 +17,28 @@ class HomeLoadEstimate extends HomeState {
   HomeLoadEstimate(this.estimateResponse);
 }
 
-class HomeLoadOrganisations extends HomeState {}
-
 class HomeLoadOutlay extends HomeState {
-  final expense;
-  HomeLoadOutlay(this.expense);
+  final outlay;
+
+  HomeLoadOutlay(this.outlay);
 }
 
-class HomeLoadProducts extends HomeState {}
+class HomeLoadProducts extends HomeState {
+  final products;
 
-class HomeLoadProvider extends HomeState {}
+  HomeLoadProducts(this.products);
+}
+
+class HomeLoadProvider extends HomeState {
+  final provider;
+
+  HomeLoadProvider(this.provider);
+}
 
 class HomeLoadResources extends HomeState {
-  final resourceResponse;
+  final resources;
 
-  HomeLoadResources(this.resourceResponse);
+  HomeLoadResources(this.resources);
 }
 
 class HomeComplete extends HomeState {}

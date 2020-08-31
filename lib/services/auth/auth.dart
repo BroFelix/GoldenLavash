@@ -17,22 +17,21 @@ class AuthService {
     return null;
   }
 
-  Future<Token> requestLogin(
-      BuildContext context, String username, String password) async {
-    final url = "${this.apiUrl}/rest-auth/login/";
+  // Future<Token> requestLogin(
+  //     BuildContext context, String username, String password) async {
+  //   final url = "${this.apiUrl}/rest-auth/login/";
+  //   Map<String, String> body = {
+  //     'username': username,
+  //     'password': password,
+  //   };
 
-    Map<String, String> body = {
-      'username': username,
-      'password': password,
-    };
+  //   final response = await http.post(url, body: body);
 
-    final response = await http.post(url, body: body);
-
-    if (response.statusCode == 200) {
-      final responseJson = json.decode(response.body);
-      final er = responseJson;
-    }
-  }
+  //   if (response.statusCode == 200) {
+  //     final responseJson = json.decode(response.body);
+  //     final er = responseJson;
+  //   }
+  // }
 
   Future<Token> login(
       BuildContext context, String username, String password) async {
@@ -52,7 +51,7 @@ class AuthService {
 //      Navigator.of(context).pushReplacementNamed('/login');
       return token;
     } else {
-      final responseJson = json.decode(response.body);
+      // final responseJson = json.decode(response.body);
 
 //      await saveCurrentLogin(responseJson);
       return null;

@@ -21,7 +21,7 @@ saveCurrentUser(Map responseJson) async {
   var user = (responseJson != null && responseJson.isNotEmpty)
       ? json.encode(User.fromJson(responseJson).toJson())
       : "";
-  print("User: ${user}");
+  print("User: $user");
 
   await preferences.setString(
       "user", (user != null && user.length > 0) ? user : "");

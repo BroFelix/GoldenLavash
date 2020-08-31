@@ -1,80 +1,121 @@
-class User {
+// To parse this JSON data, do
+//
+//     final userResponse = userResponseFromJson(jsonString);
+
+import 'dart:convert';
+
+UserResponse userResponseFromJson(String str) => UserResponse.fromJson(json.decode(str));
+
+String userResponseToJson(UserResponse data) => json.encode(data.toJson());
+
+class UserResponse {
+  UserResponse({
+    this.count,
+    this.next,
+    this.previous,
+    this.results,
+  });
+
   int count;
   dynamic next;
   dynamic previous;
-  List<Results> results;
+  List<User> results;
 
-  User({this.count, this.next, this.previous, this.results});
+  UserResponse copyWith({
+    int count,
+    dynamic next,
+    dynamic previous,
+    List<User> results,
+  }) =>
+      UserResponse(
+        count: count ?? this.count,
+        next: next ?? this.next,
+        previous: previous ?? this.previous,
+        results: results ?? this.results,
+      );
 
-  User.fromJson(Map<String, dynamic> json) {
-    count = json['count'];
-    next = json['next'];
-    previous = json['previous'];
-    if (json['results'] != null) {
-      results = new List<Results>();
-      json['results'].forEach((v) {
-        results.add(new Results.fromJson(v));
-      });
-    }
-  }
+  factory UserResponse.fromJson(Map<String, dynamic> json) => UserResponse(
+    count: json["count"],
+    next: json["next"],
+    previous: json["previous"],
+    results: List<User>.from(json["results"].map((x) => User.fromJson(x))),
+  );
 
-  Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = new Map<String, dynamic>();
-    data['count'] = this.count;
-    data['next'] = this.next;
-    data['previous'] = this.previous;
-    if (this.results != null) {
-      data['results'] = this.results.map((v) => v.toJson()).toList();
-    }
-    return data;
-  }
+  Map<String, dynamic> toJson() => {
+    "count": count,
+    "next": next,
+    "previous": previous,
+    "results": List<dynamic>.from(results.map((x) => x.toJson())),
+  };
 }
 
-class Results {
+class User {
+  User({
+    this.id,
+    this.password,
+    this.firstName,
+    this.lastName,
+    this.email,
+    this.username,
+    this.isActive,
+    this.userType,
+    this.phone,
+  });
+
   int id;
   String password;
-  Null firstName;
-  Null lastName;
-  Null email;
+  dynamic firstName;
+  dynamic lastName;
+  dynamic email;
   String username;
   bool isActive;
   String userType;
   String phone;
 
-  Results(
-      {this.id,
-        this.password,
-        this.firstName,
-        this.lastName,
-        this.email,
-        this.username,
-        this.isActive,
-        this.userType,
-        this.phone});
+  User copyWith({
+    int id,
+    String password,
+    dynamic firstName,
+    dynamic lastName,
+    dynamic email,
+    String username,
+    bool isActive,
+    String userType,
+    String phone,
+  }) =>
+      User(
+        id: id ?? this.id,
+        password: password ?? this.password,
+        firstName: firstName ?? this.firstName,
+        lastName: lastName ?? this.lastName,
+        email: email ?? this.email,
+        username: username ?? this.username,
+        isActive: isActive ?? this.isActive,
+        userType: userType ?? this.userType,
+        phone: phone ?? this.phone,
+      );
 
-  Results.fromJson(Map<String, dynamic> json) {
-    id = json['id'];
-    password = json['password'];
-    firstName = json['first_name'];
-    lastName = json['last_name'];
-    email = json['email'];
-    username = json['username'];
-    isActive = json['is_active'];
-    userType = json['user_type'];
-    phone = json['phone'];
-  }
+  factory User.fromJson(Map<String, dynamic> json) => User(
+    id: json["id"],
+    password: json["password"],
+    firstName: json["first_name"],
+    lastName: json["last_name"],
+    email: json["email"],
+    username: json["username"],
+    isActive: json["is_active"],
+    userType: json["user_type"],
+    phone: json["phone"],
+  );
 
-  Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = new Map<String, dynamic>();
-    data['id'] = this.id;
-    data['password'] = this.password;
-    data['first_name'] = this.firstName;
-    data['last_name'] = this.lastName;
-    data['email'] = this.email;
-    data['username'] = this.username;
-    data['is_active'] = this.isActive;
-    data['user_type'] = this.userType;
-    data['phone'] = this.phone;
-    return data;
-  }
+  Map<String, dynamic> toJson() => {
+    "id": id,
+    "password": password,
+    "first_name": firstName,
+    "last_name": lastName,
+    "email": email,
+    "username": username,
+    "is_active": isActive,
+    "user_type": userType,
+    "phone": phone,
+  };
 }

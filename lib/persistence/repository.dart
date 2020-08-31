@@ -1,6 +1,7 @@
 import 'package:golden_app/models/estimate.dart';
-import 'package:golden_app/models/expense.dart';
-import 'package:golden_app/models/resource.dart';
+import 'package:golden_app/models/estimate_resource.dart';
+import 'package:golden_app/models/outlay_category.dart';
+import 'package:golden_app/models/outlay_item.dart';
 import 'package:golden_app/services/api/api.dart';
 
 class Repository {
@@ -8,7 +9,12 @@ class Repository {
 
   Future<EstimateResponse> fetchEstimate() => apiService.getEstimates();
 
-  Future<ExpenseResponse> fetchExpense() => apiService.getExpenses();
+  Future<OutlayItemResponse> fetchEstimateItem() => apiService.getOutlayItem();
 
-  Future<ResourceResponse> fetchResource() => apiService.getResources();
+  Future<OutlayCategoryResponse> fetchOutlayCategory() =>
+      apiService.getOutlayCategory();
+
+  Future<EstimateResourceResponse> fetchResource() =>
+      apiService.getEstimateResources();
+
 }

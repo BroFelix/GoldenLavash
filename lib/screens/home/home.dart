@@ -2,11 +2,13 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:golden_app/bloc/home/bloc.dart';
+import 'package:golden_app/bloc/home/home.dart';
 import 'package:golden_app/screens/home/components/drawer.dart';
-import 'package:golden_app/screens/home/components/estimate.dart';
-import 'package:golden_app/screens/home/components/outlay.dart';
-import 'package:golden_app/screens/home/components/resources.dart';
+import 'package:golden_app/screens/home/components/pages/estimate.dart';
+import 'package:golden_app/screens/home/components/pages/outlay.dart';
+import 'package:golden_app/screens/home/components/pages/products.dart';
+import 'package:golden_app/screens/home/components/pages/provider.dart';
+import 'package:golden_app/screens/home/components/pages/resources.dart';
 
 class HomeScreen extends StatefulWidget {
   static const route = '/home';
@@ -17,6 +19,12 @@ class HomeScreen extends StatefulWidget {
 
 class _HomeScreenState extends State<HomeScreen> {
   final bloc = HomeBloc(HomeInit());
+
+  @override
+  void initState() {
+    super.initState();
+    bloc.add(GetData());
+  }
 
   @override
   void dispose() {
@@ -43,33 +51,21 @@ class _HomeScreenState extends State<HomeScreen> {
         cubit: bloc,
         builder: (BuildContext context, HomeState state) {
           if (state is HomeInit) {
-            return Center(
-              child: Text('HomeInit'),
+            return Container();
+          } else if (state is HomeLoadEstimate) {
+            return EstimatePage(estimateResponse: state.estimateResponse);
+          } else if (state is HomeLoadResources) {
+            return ResourcesPage(resources: state.resources);
+          } else if (state is HomeLoadProvider) {
+            return ProviderPage(
+              providers: state.provider,
             );
-          }
-          if (state is HomeLoadEstimate) {
-            return EstimateScreen(estimateResponse: state.estimateResponse);
-          }
-          if (state is HomeLoadResources) {
-            return ResourcesScreen(resourceResponse: state.resourceResponse);
-          }
-          if (state is HomeLoadOrganisations) {
-            return Center(
-              child: Text('Organisations'),
+          } else if (state is HomeLoadProducts) {
+            return ProductsPage(
+              products: state.products,
             );
-          }
-          if (state is HomeLoadProvider) {
-            return Center(
-              child: Text('Provider'),
-            );
-          }
-          if (state is HomeLoadProducts) {
-            return Center(
-              child: Text('Products'),
-            );
-          }
-          if (state is HomeLoadOutlay) {
-            return OutlayScreen(expenseResponse: state.expense);
+          } else if (state is HomeLoadOutlay) {
+            return OutlayPage(outlayResponse: state.outlay);
           }
           bloc.add(HomeNavigationComplete());
           return Center(child: Text('Default'));
