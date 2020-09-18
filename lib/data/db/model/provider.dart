@@ -9,6 +9,10 @@ class Provider {
     this.registerDate,
     this.status,
     this.registerUser,
+    this.itn,
+    this.address,
+    this.latitude,
+    this.longitude,
   });
 
   @primaryKey
@@ -18,6 +22,10 @@ class Provider {
   String registerDate;
   bool status;
   int registerUser;
+  String itn;
+  String address;
+  String latitude;
+  String longitude;
 
   Provider copyWith({
     int id,
@@ -26,6 +34,8 @@ class Provider {
     DateTime registerDate,
     bool status,
     int registerUser,
+    String latitude,
+    String longitude,
   }) =>
       Provider(
         id: id ?? this.id,
@@ -34,6 +44,10 @@ class Provider {
         registerDate: registerDate ?? this.registerDate,
         status: status ?? this.status,
         registerUser: registerUser ?? this.registerUser,
+        itn: itn ?? this.itn,
+        address: address ?? this.address,
+        latitude: latitude ?? this.latitude,
+        longitude: longitude ?? this.longitude,
       );
 
   factory Provider.fromJson(Map<String, dynamic> json) => Provider(
@@ -43,6 +57,10 @@ class Provider {
         registerDate: json["register_date"],
         status: json["status"],
         registerUser: json["register_user"],
+        itn: json["itn"],
+        address: json["address"],
+        latitude: json["latitude"],
+        longitude: json["longitude"],
       );
 
   Map<String, dynamic> toJson() => {
@@ -52,5 +70,9 @@ class Provider {
         "register_date": registerDate,
         "status": status,
         "register_user": registerUser,
+        "itn": itn,
+        "address": address,
+        "latitude": latitude,
+        "longitude": longitude,
       };
 }

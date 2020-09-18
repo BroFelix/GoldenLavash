@@ -2,13 +2,15 @@ import 'package:golden_app/data/db/config/base.dart';
 import 'package:golden_app/data/db/database.dart';
 import 'package:golden_app/data/db/model/company.dart';
 import 'package:golden_app/data/db/model/estimate.dart';
-import 'package:golden_app/data/db/model/expense.dart';
-import 'package:golden_app/data/db/model/manufacture.dart';
+import 'package:golden_app/data/db/model/estimate_resource.dart';
+import 'package:golden_app/data/db/model/outlay_category.dart';
+import 'package:golden_app/data/db/model/outlay_item.dart';
 import 'package:golden_app/data/db/model/product.dart';
 import 'package:golden_app/data/db/model/provider.dart';
-import 'package:golden_app/data/db/model/estimate_resource.dart';
 import 'package:golden_app/data/db/model/resource.dart';
 import 'package:golden_app/services/api/api.dart';
+
+import 'db/model/estimate_item.dart';
 
 class DataInitialisator {
   ApiService api;
@@ -37,25 +39,10 @@ class DataInitialisator {
   Future populateEstimate() async {
     var estimateResponse = await api.getEstimates();
     List<Estimate> estimates = [];
-    print('Init created = ${estimateResponse.results[0].created}');
+    // print('Init created = ${estimateResponse.results[0].created}');
     estimateResponse.results
         .forEach((e) => estimates.add(Estimate.fromJson(e.toJson())));
     return await db.estimateDao.insertEstimates(estimates);
-  }
-
-  Future populateExpenses() async {
-    var expense = await api.getEstimates();
-    List<Expense> expenses = [];
-    expense.results.forEach((e) => expenses.add(Expense.fromJson(e.toJson())));
-    return await db.expenseDao.insertExpenses(expenses);
-  }
-
-  Future populateManufactures() async {
-    var manufacture = await api.getManufacture();
-    List<Manufacture> manufactures = [];
-    manufacture.results
-        .forEach((e) => manufactures.add(Manufacture.fromJson(e.toJson())));
-    return await db.manufactureDao.insertManufactures(manufactures);
   }
 
   Future populateProduct() async {
@@ -87,5 +74,28 @@ class DataInitialisator {
     resource.results
         .forEach((e) => resources.add(EstimateResource.fromJson(e.toJson())));
     return await db.estimateResourceDao.insertEstimateResources(resources);
+  }
+
+  Future populateEstimateItem() async {
+    var item = await api.getEstimateItem();
+    List<EstimateItem> items = [];
+    item.results.forEach((e) => items.add(EstimateItem.fromJson(e.toJson())));
+    return await db.estimateItemDao.insertEstimateItems(items);
+  }
+
+  Future populateOutlayCategory() async {
+    var outlayCat = await api.getOutlayCategory();
+    List<OutlayCategory> outlayCats = [];
+    outlayCat.results.forEach(
+        (element) => outlayCats.add(OutlayCategory.fromJson(element.toJson())));
+    return await db.outlayCategoryDao.insertAllOutlayCategories(outlayCats);
+  }
+
+  Future populateOutlayItem() async {
+    var outlayItem = await api.getOutlayItem();
+    List<OutlayItem> outlayItems = [];
+    outlayItem.results
+        .forEach((e) => outlayItems.add(OutlayItem.fromJson(e.toJson())));
+    return await db.outlayItemDao.insertAllOutlayItems(outlayItems);
   }
 }

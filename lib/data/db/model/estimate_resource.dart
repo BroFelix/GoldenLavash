@@ -23,6 +23,8 @@ class EstimateResource {
     this.status,
     this.sendWarehouse,
     this.acceptedWarehouse,
+    this.priceUsd,
+    this.rate,
     this.company,
     this.estimate,
     this.resource,
@@ -38,6 +40,8 @@ class EstimateResource {
   int status;
   bool sendWarehouse;
   bool acceptedWarehouse;
+  double priceUsd;
+  int rate;
 
   @ColumnInfo(name: 'company')
   int company;
@@ -60,6 +64,8 @@ class EstimateResource {
     int status,
     bool sendWarehouse,
     bool acceptedWarehouse,
+    double priceUsd,
+    int rate,
     int company,
     int estimate,
     int resource,
@@ -74,6 +80,8 @@ class EstimateResource {
         status: status ?? this.status,
         sendWarehouse: sendWarehouse ?? this.sendWarehouse,
         acceptedWarehouse: acceptedWarehouse ?? this.acceptedWarehouse,
+        priceUsd: priceUsd ?? this.priceUsd,
+        rate: rate ?? this.rate,
         company: company ?? this.company,
         estimate: estimate ?? this.estimate,
         resource: resource ?? this.resource,
@@ -90,6 +98,8 @@ class EstimateResource {
         status: json["status"],
         sendWarehouse: json["send_warehouse"],
         acceptedWarehouse: json["accepted_warehouse"],
+        priceUsd: json["price_usd"],
+        rate: json["rate"],
         company: json["company"],
         estimate: json["estimate"],
         resource: json["resource"],
@@ -105,6 +115,8 @@ class EstimateResource {
         "status": status,
         "send_warehouse": sendWarehouse,
         "accepted_warehouse": acceptedWarehouse,
+        "price_usd": priceUsd,
+        "rate": rate,
         "company": company,
         "estimate": estimate,
         "resource": resource,

@@ -64,17 +64,19 @@ class _$AppDatabase extends AppDatabase {
 
   EstimateDao _estimateDaoInstance;
 
+  EstimateItemDao _estimateItemDaoInstance;
+
   EstimateResourceDao _estimateResourceDaoInstance;
-
-  ExpenseDao _expenseDaoInstance;
-
-  ManufactureDao _manufactureDaoInstance;
 
   ProductDao _productDaoInstance;
 
   ProviderDao _providerDaoInstance;
 
   ResourceDao _resourceDaoInstance;
+
+  OutlayCategoryDao _outlayCategoryDaoInstance;
+
+  OutlayItemDao _outlayItemDaoInstance;
 
   Future<sqflite.Database> open(String path, List<Migration> migrations,
       [Callback callback]) async {
@@ -98,17 +100,19 @@ class _$AppDatabase extends AppDatabase {
         await database.execute(
             'CREATE TABLE IF NOT EXISTS `Estimate` (`id` INTEGER, `created` TEXT, `weekNumb` INTEGER, `docNumb` TEXT, `docDateStart` TEXT, `docDateEnd` TEXT, `status` INTEGER, `directorStatus` INTEGER, `directorStatusDate` TEXT, `counterStatus` INTEGER, `counterStatusDate` TEXT, `user` INTEGER, `company` INTEGER, `directorUser` INTEGER, `counterUser` INTEGER, FOREIGN KEY (`company`) REFERENCES `Company` (`id`) ON UPDATE NO ACTION ON DELETE NO ACTION, PRIMARY KEY (`id`))');
         await database.execute(
-            'CREATE TABLE IF NOT EXISTS `EstimateResource` (`id` INTEGER, `count` INTEGER, `countOld` INTEGER, `price` INTEGER, `amount` INTEGER, `status` INTEGER, `sendWarehouse` INTEGER, `acceptedWarehouse` INTEGER, `company` INTEGER, `estimate` INTEGER, `resource` INTEGER, `provider` INTEGER, FOREIGN KEY (`company`) REFERENCES `Company` (`id`) ON UPDATE NO ACTION ON DELETE NO ACTION, FOREIGN KEY (`estimate`) REFERENCES `Estimate` (`id`) ON UPDATE NO ACTION ON DELETE NO ACTION, FOREIGN KEY (`provider`) REFERENCES `Provider` (`id`) ON UPDATE NO ACTION ON DELETE NO ACTION, FOREIGN KEY (`resource`) REFERENCES `Resource` (`id`) ON UPDATE NO ACTION ON DELETE NO ACTION, PRIMARY KEY (`id`))');
-        await database.execute(
-            'CREATE TABLE IF NOT EXISTS `Expense` (`id` INTEGER, `count` INTEGER, `countOld` INTEGER, `price` INTEGER, `amount` INTEGER, `status` INTEGER, `sendWarehouse` INTEGER, `acceptedWarehouse` INTEGER, `company` INTEGER, `estimate` INTEGER, `resource` INTEGER, `provider` INTEGER, FOREIGN KEY (`company`) REFERENCES `Company` (`id`) ON UPDATE NO ACTION ON DELETE NO ACTION, FOREIGN KEY (`estimate`) REFERENCES `Estimate` (`id`) ON UPDATE NO ACTION ON DELETE NO ACTION, FOREIGN KEY (`resource`) REFERENCES `Resource` (`id`) ON UPDATE NO ACTION ON DELETE NO ACTION, FOREIGN KEY (`provider`) REFERENCES `Provider` (`id`) ON UPDATE NO ACTION ON DELETE NO ACTION, PRIMARY KEY (`id`))');
-        await database.execute(
-            'CREATE TABLE IF NOT EXISTS `Manufacture` (`id` INTEGER, `resource` INTEGER, `count` INTEGER, `selfPrice` INTEGER, `productTitle` TEXT, FOREIGN KEY (`resource`) REFERENCES `Resource` (`id`) ON UPDATE NO ACTION ON DELETE NO ACTION, PRIMARY KEY (`id`))');
+            'CREATE TABLE IF NOT EXISTS `EstimateResource` (`id` INTEGER, `count` INTEGER, `countOld` INTEGER, `price` INTEGER, `amount` INTEGER, `status` INTEGER, `sendWarehouse` INTEGER, `acceptedWarehouse` INTEGER, `priceUsd` REAL, `rate` INTEGER, `company` INTEGER, `estimate` INTEGER, `resource` INTEGER, `provider` INTEGER, FOREIGN KEY (`company`) REFERENCES `Company` (`id`) ON UPDATE NO ACTION ON DELETE NO ACTION, FOREIGN KEY (`estimate`) REFERENCES `Estimate` (`id`) ON UPDATE NO ACTION ON DELETE NO ACTION, FOREIGN KEY (`provider`) REFERENCES `Provider` (`id`) ON UPDATE NO ACTION ON DELETE NO ACTION, FOREIGN KEY (`resource`) REFERENCES `Resource` (`id`) ON UPDATE NO ACTION ON DELETE NO ACTION, PRIMARY KEY (`id`))');
         await database.execute(
             'CREATE TABLE IF NOT EXISTS `Product` (`id` INTEGER, `title` TEXT, `code` TEXT, `price` INTEGER, `boxCount` INTEGER, `company` INTEGER, PRIMARY KEY (`id`))');
         await database.execute(
-            'CREATE TABLE IF NOT EXISTS `Provider` (`id` INTEGER, `name` TEXT, `contacts` TEXT, `registerDate` TEXT, `status` INTEGER, `registerUser` INTEGER, PRIMARY KEY (`id`))');
+            'CREATE TABLE IF NOT EXISTS `Provider` (`id` INTEGER, `name` TEXT, `contacts` TEXT, `registerDate` TEXT, `status` INTEGER, `registerUser` INTEGER, `itn` TEXT, `address` TEXT, `latitude` TEXT, `longitude` TEXT, PRIMARY KEY (`id`))');
         await database.execute(
             'CREATE TABLE IF NOT EXISTS `Resource` (`id` INTEGER, `title` TEXT, `editType` INTEGER, `resourceType` TEXT, PRIMARY KEY (`id`))');
+        await database.execute(
+            'CREATE TABLE IF NOT EXISTS `EstimateItem` (`id` INTEGER, `count` INTEGER, `countOld` INTEGER, `price` INTEGER, `priceOld` INTEGER, `amount` INTEGER, `status` INTEGER, `priceUsd` REAL, `rate` INTEGER, `company` INTEGER, `estimate` INTEGER, `outlayItem` INTEGER, `provider` INTEGER, FOREIGN KEY (`company`) REFERENCES `Company` (`id`) ON UPDATE NO ACTION ON DELETE NO ACTION, FOREIGN KEY (`estimate`) REFERENCES `Estimate` (`id`) ON UPDATE NO ACTION ON DELETE NO ACTION, FOREIGN KEY (`outlayItem`) REFERENCES `OutlayItem` (`id`) ON UPDATE NO ACTION ON DELETE NO ACTION, FOREIGN KEY (`provider`) REFERENCES `Provider` (`id`) ON UPDATE NO ACTION ON DELETE NO ACTION, PRIMARY KEY (`id`))');
+        await database.execute(
+            'CREATE TABLE IF NOT EXISTS `OutlayCategory` (`id` INTEGER, `title` TEXT, PRIMARY KEY (`id`))');
+        await database.execute(
+            'CREATE TABLE IF NOT EXISTS `OutlayItem` (`id` INTEGER, `title` TEXT, `outlayCategory` INTEGER NOT NULL, FOREIGN KEY (`outlayCategory`) REFERENCES `OutlayCategory` (`id`) ON UPDATE NO ACTION ON DELETE NO ACTION, PRIMARY KEY (`id`))');
 
         await callback?.onCreate?.call(database, version);
       },
@@ -127,20 +131,15 @@ class _$AppDatabase extends AppDatabase {
   }
 
   @override
+  EstimateItemDao get estimateItemDao {
+    return _estimateItemDaoInstance ??=
+        _$EstimateItemDao(database, changeListener);
+  }
+
+  @override
   EstimateResourceDao get estimateResourceDao {
     return _estimateResourceDaoInstance ??=
         _$EstimateResourceDao(database, changeListener);
-  }
-
-  @override
-  ExpenseDao get expenseDao {
-    return _expenseDaoInstance ??= _$ExpenseDao(database, changeListener);
-  }
-
-  @override
-  ManufactureDao get manufactureDao {
-    return _manufactureDaoInstance ??=
-        _$ManufactureDao(database, changeListener);
   }
 
   @override
@@ -156,6 +155,17 @@ class _$AppDatabase extends AppDatabase {
   @override
   ResourceDao get resourceDao {
     return _resourceDaoInstance ??= _$ResourceDao(database, changeListener);
+  }
+
+  @override
+  OutlayCategoryDao get outlayCategoryDao {
+    return _outlayCategoryDaoInstance ??=
+        _$OutlayCategoryDao(database, changeListener);
+  }
+
+  @override
+  OutlayItemDao get outlayItemDao {
+    return _outlayItemDaoInstance ??= _$OutlayItemDao(database, changeListener);
   }
 }
 
@@ -200,6 +210,11 @@ class _$CompanyDao extends CompanyDao {
   Future<Company> getCompany(int id) async {
     return _queryAdapter.query('SELECT * FROM Company Where id = ?',
         arguments: <dynamic>[id], mapper: _companyMapper);
+  }
+
+  @override
+  Future<void> deleteAllCompanies() async {
+    await _queryAdapter.queryNoReturn('DELETE FROM Company');
   }
 
   @override
@@ -277,6 +292,11 @@ class _$EstimateDao extends EstimateDao {
   }
 
   @override
+  Future<void> deleteAllEstimates() async {
+    await _queryAdapter.queryNoReturn('DELETE FROM Estimate');
+  }
+
+  @override
   Future<int> insertEstimate(Estimate estimate) {
     return _estimateInsertionAdapter.insertAndReturnId(
         estimate, OnConflictStrategy.replace);
@@ -286,6 +306,81 @@ class _$EstimateDao extends EstimateDao {
   Future<List<int>> insertEstimates(List<Estimate> estimates) {
     return _estimateInsertionAdapter.insertListAndReturnIds(
         estimates, OnConflictStrategy.replace);
+  }
+}
+
+class _$EstimateItemDao extends EstimateItemDao {
+  _$EstimateItemDao(this.database, this.changeListener)
+      : _queryAdapter = QueryAdapter(database),
+        _estimateItemInsertionAdapter = InsertionAdapter(
+            database,
+            'EstimateItem',
+            (EstimateItem item) => <String, dynamic>{
+                  'id': item.id,
+                  'count': item.count,
+                  'countOld': item.countOld,
+                  'price': item.price,
+                  'priceOld': item.priceOld,
+                  'amount': item.amount,
+                  'status': item.status,
+                  'priceUsd': item.priceUsd,
+                  'rate': item.rate,
+                  'company': item.company,
+                  'estimate': item.estimate,
+                  'outlayItem': item.outlayItem,
+                  'provider': item.provider
+                });
+
+  final sqflite.DatabaseExecutor database;
+
+  final StreamController<String> changeListener;
+
+  final QueryAdapter _queryAdapter;
+
+  static final _estimateItemMapper = (Map<String, dynamic> row) => EstimateItem(
+      id: row['id'] as int,
+      count: row['count'] as int,
+      countOld: row['countOld'] as int,
+      price: row['price'] as int,
+      priceOld: row['priceOld'] as int,
+      amount: row['amount'] as int,
+      status: row['status'] as int,
+      priceUsd: row['priceUsd'] as double,
+      rate: row['rate'] as int,
+      company: row['company'] as int,
+      estimate: row['estimate'] as int,
+      outlayItem: row['outlayItem'] as int,
+      provider: row['provider'] as int);
+
+  final InsertionAdapter<EstimateItem> _estimateItemInsertionAdapter;
+
+  @override
+  Future<List<EstimateItem>> getAllEstimateItems() async {
+    return _queryAdapter.queryList('SELECT * FROM EstimateItem',
+        mapper: _estimateItemMapper);
+  }
+
+  @override
+  Future<EstimateItem> getEstimateItem(int id) async {
+    return _queryAdapter.query('SELECT * FROM EstimateItem Where id = ?',
+        arguments: <dynamic>[id], mapper: _estimateItemMapper);
+  }
+
+  @override
+  Future<void> deleteAllEstimateItems() async {
+    await _queryAdapter.queryNoReturn('DELETE FROM EstimateItem');
+  }
+
+  @override
+  Future<int> insertEstimateItem(EstimateItem estimateItem) {
+    return _estimateItemInsertionAdapter.insertAndReturnId(
+        estimateItem, OnConflictStrategy.replace);
+  }
+
+  @override
+  Future<List<int>> insertEstimateItems(List<EstimateItem> estimateItems) {
+    return _estimateItemInsertionAdapter.insertListAndReturnIds(
+        estimateItems, OnConflictStrategy.replace);
   }
 }
 
@@ -308,6 +403,8 @@ class _$EstimateResourceDao extends EstimateResourceDao {
                   'acceptedWarehouse': item.acceptedWarehouse == null
                       ? null
                       : (item.acceptedWarehouse ? 1 : 0),
+                  'priceUsd': item.priceUsd,
+                  'rate': item.rate,
                   'company': item.company,
                   'estimate': item.estimate,
                   'resource': item.resource,
@@ -334,6 +431,8 @@ class _$EstimateResourceDao extends EstimateResourceDao {
           acceptedWarehouse: row['acceptedWarehouse'] == null
               ? null
               : (row['acceptedWarehouse'] as int) != 0,
+          priceUsd: row['priceUsd'] as double,
+          rate: row['rate'] as int,
           company: row['company'] as int,
           estimate: row['estimate'] as int,
           resource: row['resource'] as int,
@@ -354,6 +453,11 @@ class _$EstimateResourceDao extends EstimateResourceDao {
   }
 
   @override
+  Future<void> deleteAllEstimateResources() async {
+    await _queryAdapter.queryNoReturn('DELETE FROM EstimateResource');
+  }
+
+  @override
   Future<int> insertEstimateResource(EstimateResource estimate) {
     return _estimateResourceInsertionAdapter.insertAndReturnId(
         estimate, OnConflictStrategy.replace);
@@ -363,136 +467,6 @@ class _$EstimateResourceDao extends EstimateResourceDao {
   Future<List<int>> insertEstimateResources(List<EstimateResource> estimates) {
     return _estimateResourceInsertionAdapter.insertListAndReturnIds(
         estimates, OnConflictStrategy.replace);
-  }
-}
-
-class _$ExpenseDao extends ExpenseDao {
-  _$ExpenseDao(this.database, this.changeListener)
-      : _queryAdapter = QueryAdapter(database),
-        _expenseInsertionAdapter = InsertionAdapter(
-            database,
-            'Expense',
-            (Expense item) => <String, dynamic>{
-                  'id': item.id,
-                  'count': item.count,
-                  'countOld': item.countOld,
-                  'price': item.price,
-                  'amount': item.amount,
-                  'status': item.status,
-                  'sendWarehouse': item.sendWarehouse == null
-                      ? null
-                      : (item.sendWarehouse ? 1 : 0),
-                  'acceptedWarehouse': item.acceptedWarehouse == null
-                      ? null
-                      : (item.acceptedWarehouse ? 1 : 0),
-                  'company': item.company,
-                  'estimate': item.estimate,
-                  'resource': item.resource,
-                  'provider': item.provider
-                });
-
-  final sqflite.DatabaseExecutor database;
-
-  final StreamController<String> changeListener;
-
-  final QueryAdapter _queryAdapter;
-
-  static final _expenseMapper = (Map<String, dynamic> row) => Expense(
-      id: row['id'] as int,
-      count: row['count'] as int,
-      countOld: row['countOld'] as int,
-      price: row['price'] as int,
-      amount: row['amount'] as int,
-      status: row['status'] as int,
-      sendWarehouse: row['sendWarehouse'] == null
-          ? null
-          : (row['sendWarehouse'] as int) != 0,
-      acceptedWarehouse: row['acceptedWarehouse'] == null
-          ? null
-          : (row['acceptedWarehouse'] as int) != 0,
-      company: row['company'] as int,
-      estimate: row['estimate'] as int,
-      resource: row['resource'] as int,
-      provider: row['provider'] as int);
-
-  final InsertionAdapter<Expense> _expenseInsertionAdapter;
-
-  @override
-  Future<List<Expense>> getAllExpenses() async {
-    return _queryAdapter.queryList('SELECT * FROM Expense',
-        mapper: _expenseMapper);
-  }
-
-  @override
-  Future<Expense> getExpense(int id) async {
-    return _queryAdapter.query('SELECT * FROM Expense Where id = ?',
-        arguments: <dynamic>[id], mapper: _expenseMapper);
-  }
-
-  @override
-  Future<int> insertExpense(Expense expense) {
-    return _expenseInsertionAdapter.insertAndReturnId(
-        expense, OnConflictStrategy.replace);
-  }
-
-  @override
-  Future<List<int>> insertExpenses(List<Expense> expenses) {
-    return _expenseInsertionAdapter.insertListAndReturnIds(
-        expenses, OnConflictStrategy.replace);
-  }
-}
-
-class _$ManufactureDao extends ManufactureDao {
-  _$ManufactureDao(this.database, this.changeListener)
-      : _queryAdapter = QueryAdapter(database),
-        _manufactureInsertionAdapter = InsertionAdapter(
-            database,
-            'Manufacture',
-            (Manufacture item) => <String, dynamic>{
-                  'id': item.id,
-                  'resource': item.resource,
-                  'count': item.count,
-                  'selfPrice': item.selfPrice,
-                  'productTitle': item.productTitle
-                });
-
-  final sqflite.DatabaseExecutor database;
-
-  final StreamController<String> changeListener;
-
-  final QueryAdapter _queryAdapter;
-
-  static final _manufactureMapper = (Map<String, dynamic> row) => Manufacture(
-      id: row['id'] as int,
-      resource: row['resource'] as int,
-      count: row['count'] as int,
-      selfPrice: row['selfPrice'] as int,
-      productTitle: row['productTitle'] as String);
-
-  final InsertionAdapter<Manufacture> _manufactureInsertionAdapter;
-
-  @override
-  Future<List<Manufacture>> getAllManufactures() async {
-    return _queryAdapter.queryList('SELECT * FROM Manufacture',
-        mapper: _manufactureMapper);
-  }
-
-  @override
-  Future<Manufacture> getManufacture(int id) async {
-    return _queryAdapter.query('SELECT * FROM Manufacture Where id = ?',
-        arguments: <dynamic>[id], mapper: _manufactureMapper);
-  }
-
-  @override
-  Future<int> insertManufacture(Manufacture manufacture) {
-    return _manufactureInsertionAdapter.insertAndReturnId(
-        manufacture, OnConflictStrategy.replace);
-  }
-
-  @override
-  Future<List<int>> insertManufactures(List<Manufacture> manufactures) {
-    return _manufactureInsertionAdapter.insertListAndReturnIds(
-        manufactures, OnConflictStrategy.replace);
   }
 }
 
@@ -540,6 +514,11 @@ class _$ProductDao extends ProductDao {
   }
 
   @override
+  Future<void> deleteAllProducts() async {
+    await _queryAdapter.queryNoReturn('DELETE FROM Product');
+  }
+
+  @override
   Future<int> insertProduct(Product product) {
     return _productInsertionAdapter.insertAndReturnId(
         product, OnConflictStrategy.replace);
@@ -564,7 +543,11 @@ class _$ProviderDao extends ProviderDao {
                   'contacts': item.contacts,
                   'registerDate': item.registerDate,
                   'status': item.status == null ? null : (item.status ? 1 : 0),
-                  'registerUser': item.registerUser
+                  'registerUser': item.registerUser,
+                  'itn': item.itn,
+                  'address': item.address,
+                  'latitude': item.latitude,
+                  'longitude': item.longitude
                 });
 
   final sqflite.DatabaseExecutor database;
@@ -579,7 +562,11 @@ class _$ProviderDao extends ProviderDao {
       contacts: row['contacts'] as String,
       registerDate: row['registerDate'] as String,
       status: row['status'] == null ? null : (row['status'] as int) != 0,
-      registerUser: row['registerUser'] as int);
+      registerUser: row['registerUser'] as int,
+      itn: row['itn'] as String,
+      address: row['address'] as String,
+      latitude: row['latitude'] as String,
+      longitude: row['longitude'] as String);
 
   final InsertionAdapter<Provider> _providerInsertionAdapter;
 
@@ -593,6 +580,11 @@ class _$ProviderDao extends ProviderDao {
   Future<Provider> getProvider(int id) async {
     return _queryAdapter.query('SELECT * FROM Provider Where id = ?',
         arguments: <dynamic>[id], mapper: _providerMapper);
+  }
+
+  @override
+  Future<void> deleteAllProviders() async {
+    await _queryAdapter.queryNoReturn('DELETE FROM Provider');
   }
 
   @override
@@ -648,6 +640,11 @@ class _$ResourceDao extends ResourceDao {
   }
 
   @override
+  Future<void> deleteAllResources() async {
+    await _queryAdapter.queryNoReturn('DELETE FROM Resource');
+  }
+
+  @override
   Future<int> insertResource(Resource resource) {
     return _resourceInsertionAdapter.insertAndReturnId(
         resource, OnConflictStrategy.replace);
@@ -657,5 +654,118 @@ class _$ResourceDao extends ResourceDao {
   Future<List<int>> insertResources(List<Resource> resources) {
     return _resourceInsertionAdapter.insertListAndReturnIds(
         resources, OnConflictStrategy.replace);
+  }
+}
+
+class _$OutlayCategoryDao extends OutlayCategoryDao {
+  _$OutlayCategoryDao(this.database, this.changeListener)
+      : _queryAdapter = QueryAdapter(database),
+        _outlayCategoryInsertionAdapter = InsertionAdapter(
+            database,
+            'OutlayCategory',
+            (OutlayCategory item) =>
+                <String, dynamic>{'id': item.id, 'title': item.title});
+
+  final sqflite.DatabaseExecutor database;
+
+  final StreamController<String> changeListener;
+
+  final QueryAdapter _queryAdapter;
+
+  static final _outlayCategoryMapper = (Map<String, dynamic> row) =>
+      OutlayCategory(id: row['id'] as int, title: row['title'] as String);
+
+  final InsertionAdapter<OutlayCategory> _outlayCategoryInsertionAdapter;
+
+  @override
+  Future<List<OutlayCategory>> getAllOutlayCategories() async {
+    return _queryAdapter.queryList('SELECT * FROM OutlayCategory',
+        mapper: _outlayCategoryMapper);
+  }
+
+  @override
+  Future<OutlayCategory> getOutlayCategory(int id) async {
+    return _queryAdapter.query('SELECT * FROM OutlayCategory Where id = ?',
+        arguments: <dynamic>[id], mapper: _outlayCategoryMapper);
+  }
+
+  @override
+  Future<void> deleteAllOutlayCategories() async {
+    await _queryAdapter.queryNoReturn('DELETE FROM OutlayCategory');
+  }
+
+  @override
+  Future<int> insertOutlayCategory(OutlayCategory outlay) {
+    return _outlayCategoryInsertionAdapter.insertAndReturnId(
+        outlay, OnConflictStrategy.replace);
+  }
+
+  @override
+  Future<List<int>> insertAllOutlayCategories(List<OutlayCategory> outlays) {
+    return _outlayCategoryInsertionAdapter.insertListAndReturnIds(
+        outlays, OnConflictStrategy.replace);
+  }
+}
+
+class _$OutlayItemDao extends OutlayItemDao {
+  _$OutlayItemDao(this.database, this.changeListener)
+      : _queryAdapter = QueryAdapter(database),
+        _outlayItemInsertionAdapter = InsertionAdapter(
+            database,
+            'OutlayItem',
+            (OutlayItem item) => <String, dynamic>{
+                  'id': item.id,
+                  'title': item.title,
+                  'outlayCategory': item.outlayCategory
+                });
+
+  final sqflite.DatabaseExecutor database;
+
+  final StreamController<String> changeListener;
+
+  final QueryAdapter _queryAdapter;
+
+  static final _outlayItemMapper = (Map<String, dynamic> row) => OutlayItem(
+      id: row['id'] as int,
+      title: row['title'] as String,
+      outlayCategory: row['outlayCategory'] as int);
+
+  final InsertionAdapter<OutlayItem> _outlayItemInsertionAdapter;
+
+  @override
+  Future<List<OutlayItem>> getAllOutlayItems() async {
+    return _queryAdapter.queryList('SELECT * FROM OutlayItem',
+        mapper: _outlayItemMapper);
+  }
+
+  @override
+  Future<OutlayItem> getOutlayItem(int id) async {
+    return _queryAdapter.query('SELECT * FROM OutlayItem Where id = ?',
+        arguments: <dynamic>[id], mapper: _outlayItemMapper);
+  }
+
+  @override
+  Future<List<OutlayItem>> getOutlaysByCategory(int outlayCategory) async {
+    return _queryAdapter.queryList(
+        'SELECT * FROM OutlayItem Where outlayCategory = ?',
+        arguments: <dynamic>[outlayCategory],
+        mapper: _outlayItemMapper);
+  }
+
+  @override
+  Future<void> deleteAllOutlayItems() async {
+    await _queryAdapter.queryNoReturn('DELETE FROM OutlayItem');
+  }
+
+  @override
+  Future<int> insertOutlayItem(OutlayItem item) {
+    return _outlayItemInsertionAdapter.insertAndReturnId(
+        item, OnConflictStrategy.replace);
+  }
+
+  @override
+  Future<List<int>> insertAllOutlayItems(List<OutlayItem> items) {
+    return _outlayItemInsertionAdapter.insertListAndReturnIds(
+        items, OnConflictStrategy.replace);
   }
 }

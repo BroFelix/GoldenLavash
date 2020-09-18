@@ -15,9 +15,6 @@ class _LoginScreenState extends State<LoginScreen> {
   Widget build(BuildContext context) {
     ScreenUtil.init(context, width: 750, height: 1334);
 
-    return Scaffold(
-      appBar: null,
-      body: LoginBodyScreen(),
-    );
+    return Scaffold(body: LoginBodyScreen());
   }
 }

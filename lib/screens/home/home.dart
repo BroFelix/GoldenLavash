@@ -1,14 +1,10 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:golden_app/bloc/home/home.dart';
+import 'package:golden_app/common/function/get_user.dart';
+import 'package:golden_app/data/data_init.dart';
+import 'package:golden_app/model/user.dart';
 import 'package:golden_app/screens/home/components/drawer.dart';
-import 'package:golden_app/screens/home/components/pages/estimate.dart';
-import 'package:golden_app/screens/home/components/pages/outlay.dart';
-import 'package:golden_app/screens/home/components/pages/products.dart';
-import 'package:golden_app/screens/home/components/pages/provider.dart';
-import 'package:golden_app/screens/home/components/pages/resources.dart';
 
 class HomeScreen extends StatefulWidget {
   static const route = '/home';
@@ -18,18 +14,40 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
-  final bloc = HomeBloc(HomeInit());
+  bool dataLoaded = false;
+
+  initData() {
+    DataInitialisator.getInstance().then((di) =>
+        di.populateCompany().then((com) =>
+            di.populateEstimate().then((est) =>
+                di.populateProvider()).then((providers) =>
+                di.populateProduct().then((product) =>
+                    di.populateResource().then((resource) =>
+                        di.populateOutlayCategory().then((category) =>
+                            di.populateOutlayItem().then((manufactures) =>
+                                di.populateEstimateResource().then((estRes) {
+                                  di.populateEstimateItem();
+                                  setState(() {
+                                    dataLoaded = true;
+                                  });
+                                }))))))));
+  }
+
+  User _user;
 
   @override
   void initState() {
+    initData();
+    Future.sync(() async {
+      _user = User.fromJson(await getUser());
+      setState(() {});
+    });
     super.initState();
-    bloc.add(GetData());
   }
 
   @override
   void dispose() {
     super.dispose();
-    bloc.close();
   }
 
   @override
@@ -37,40 +55,23 @@ class _HomeScreenState extends State<HomeScreen> {
     ScreenUtil.init(context, width: 750, height: 1334);
 
     return Scaffold(
+      resizeToAvoidBottomInset: true,
       appBar: AppBar(
-        title: Text('Home'),
+        title: Text('Golden Lavash'),
+        actions: [
+          IconButton(
+              icon: Icon(Icons.refresh),
+              onPressed: () {
+                setState(() {
+                  dataLoaded = false;
+                });
+                initData();
+              }),
+        ],
       ),
-      drawer: BlocProvider(
-        create: (context) => bloc,
-        child: HomeDrawerScreen(bloc),
-      ),
-      body: BlocBuilder<HomeBloc, HomeState>(
-        buildWhen: (prev, next) {
-          return prev != next;
-        },
-        cubit: bloc,
-        builder: (BuildContext context, HomeState state) {
-          if (state is HomeInit) {
-            return Container();
-          } else if (state is HomeLoadEstimate) {
-            return EstimatePage(estimateResponse: state.estimateResponse);
-          } else if (state is HomeLoadResources) {
-            return ResourcesPage(resources: state.resources);
-          } else if (state is HomeLoadProvider) {
-            return ProviderPage(
-              providers: state.provider,
-            );
-          } else if (state is HomeLoadProducts) {
-            return ProductsPage(
-              products: state.products,
-            );
-          } else if (state is HomeLoadOutlay) {
-            return OutlayPage(outlayResponse: state.outlay);
-          }
-          bloc.add(HomeNavigationComplete());
-          return Center(child: Text('Default'));
-        },
-      ),
+      drawer: HomeDrawerScreen(user: _user),
+      body: dataLoaded ? Container() : Center(
+          child: CircularProgressIndicator()),
     );
   }
 }

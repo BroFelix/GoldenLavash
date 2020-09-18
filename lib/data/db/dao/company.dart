@@ -14,4 +14,7 @@ abstract class CompanyDao{
 
   @Insert(onConflict: OnConflictStrategy.replace)
   Future<List<int>> insertCompanies(List<Company> companies);
+
+  @Query('DELETE FROM Company')
+  Future<void> deleteAllCompanies();
 }

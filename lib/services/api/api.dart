@@ -3,21 +3,22 @@ import 'dart:core';
 import 'dart:io';
 
 import 'package:golden_app/common/function/get_token.dart';
-import 'package:golden_app/models/company.dart';
-import 'package:golden_app/models/estimate.dart';
-import 'package:golden_app/models/estimate_item.dart';
-import 'package:golden_app/models/estimate_resource.dart';
-import 'package:golden_app/models/manufacture.dart';
-import 'package:golden_app/models/outlay_category.dart';
-import 'package:golden_app/models/outlay_item.dart';
-import 'package:golden_app/models/product.dart';
-import 'package:golden_app/models/provider.dart';
-import 'package:golden_app/models/resource.dart';
-import 'package:golden_app/models/user.dart';
+import 'package:golden_app/common/function/get_user.dart';
+import 'package:golden_app/model/company.dart';
+import 'package:golden_app/model/estimate.dart';
+import 'package:golden_app/model/estimate_item.dart';
+import 'package:golden_app/model/estimate_resource.dart';
+import 'package:golden_app/model/outlay_category.dart';
+import 'package:golden_app/model/outlay_item.dart';
+import 'package:golden_app/model/product.dart';
+import 'package:golden_app/model/provider.dart';
+import 'package:golden_app/model/qr_response.dart';
+import 'package:golden_app/model/resource.dart';
 import 'package:http/http.dart' as http;
 
 class ApiService {
-  final apiUrl = 'http://85.143.175.111:1909/api/v1';
+  final apiUrl = 'http://192.168.0.107:8001/api/v1';
+  final apiUrl1 = 'http://85.143.175.111:1909/api/v1';
 
   ApiService._();
 
@@ -30,24 +31,174 @@ class ApiService {
     return _instance;
   }
 
+  Future<QrResponse> getQRInfo(String id) async {
+    var token = await getToken();
+    var url = '$apiUrl/manufacturer_qr/get_qr/';
+    final response = await http.post(url,
+        headers: {'content-type': 'application/json'},
+        body: utf8.encode(json.encode(<String, String>{'qr': id})));
+    final responseBody = utf8.decode(response.bodyBytes);
+    final responseObj = json.decode(responseBody);
+    return QrResponse.fromJson(responseObj);
+  }
+
+  Future confirmEstimate(int estimateId, int directorUser) async {
+    var token = await getToken();
+    var url = '$apiUrl/estimate/${estimateId}/director_accept/';
+    final response = await http.post(
+      url,
+      headers: {'content-type': 'application/json'},
+      body: utf8.encode(json
+          .encode(<String, String>{'director_user': directorUser.toString()})),
+    );
+    return response;
+  }
+
   Future sendWarehouse(EstimateResource resource) async {
     var token = await getToken();
     var url = '$apiUrl/estimate-resource/${resource.id}/income_warehouse/';
-    await http.post(url,
-        headers: {HttpHeaders.authorizationHeader: 'JWT $token'},
-        body: jsonEncode(<String, String>{
-          'count': resource.countOld.toString(),
-          'price': resource.price.toString(),
-          'estimate': resource.estimate.toString(),
-        }));
+    final response = await http.post(
+      url,
+      headers: {'content-type': 'application/json'},
+      body: utf8.encode(json.encode(<String, String>{
+        'count': resource.count.toString(),
+        'price': resource.price.toString(),
+        'user': (await getUser()).id,
+      })),
+    );
+    // print(response.statusCode);
+    return response.statusCode;
   }
 
-  void addResource(EstimateResource resource) async {
+  Future insertOutlayItem(OutlayItem item) async {
     var token = await getToken();
-    var url = "$apiUrl";
-    await http.post(url,
-        headers: {HttpHeaders.authorizationHeader: 'JWT $token'},
-        body: resource.toJson());
+    var url = '$apiUrl/outlay-item/${item.id}/';
+    final response = await http.put(url,
+        headers: {'content-type': 'application/json'},
+        body: utf8.encode(
+          json.encode(item.toJson()),
+        ));
+    return response;
+  }
+
+  Future sendOutlayCategoryById({OutlayCategory category, int id}) async {
+    var token = await getToken();
+    var url = '$apiUrl/outlay-categories/$id/';
+    final response = await http.put(url,
+        headers: {'content-type': 'application/json'},
+        body: utf8.encode(json.encode(category.toJson())));
+    return response;
+  }
+
+  Future sendOutlayCategory(OutlayCategory category) async {
+    var token = await getToken();
+    var url = '$apiUrl/outlay-categories/';
+    final response = await http.post(url,
+        headers: {'content-type': 'application/json'},
+        body: utf8.encode(json.encode(category.toJson())));
+    return response;
+  }
+
+  Future sendOutlayItem(OutlayItem item) async {
+    var token = await getToken();
+    var url = '$apiUrl/outlay-item/';
+    final response = await http.post(url,
+        headers: {'content-type': 'application/json'},
+        body: utf8.encode(json.encode(item.toJson())));
+    return response;
+  }
+
+  Future sendEstimate(Estimate estimate) async {
+    var token = await getToken();
+    var url = '$apiUrl/estimate/';
+    // print(url);
+    final response = await http.post(
+      url,
+      headers: {'content-type': 'application/json'},
+      body: utf8.encode(json.encode(estimate.toJson())),
+    );
+    return response;
+  }
+
+  Future sendEstimateResource(EstimateResource resource) async {
+    var token = await getToken();
+    var url = "$apiUrl/estimate-resource/";
+    final response = await http.post(url,
+        headers: {'Content-Type': 'application/json'},
+        body: utf8.encode(json.encode(resource.toJson())));
+    return response;
+  }
+
+  Future insertEstimateResource(EstimateResource resource) async {
+    var token = await getToken();
+    var url = "$apiUrl/estimate-resource/${resource.id}/";
+    final response = await http.put(url,
+        headers: {'Content-Type': 'application/json'},
+        body: utf8.encode(json.encode(resource.toJson())));
+    return response;
+  }
+
+  Future insertEstimateItem(EstimateItem item) async {
+    var token = await getToken();
+    var url = '$apiUrl/estimate-item/${item.id}/';
+    final response = await http.put(url,
+        headers: {'content-type': 'application/json'},
+        body: utf8.encode(json.encode(item.toJson())));
+    return response;
+  }
+
+  Future sendEstimateItem(EstimateItem item) async {
+    var token = await getToken();
+    var url = '$apiUrl/estimate-item/';
+    final response = await http.post(url,
+        headers: {'content-type': 'application/json'},
+        body: utf8.encode(json.encode(item.toJson())));
+    return response;
+  }
+
+  Future sendResourceById({Resource resource, int id}) async {
+    var token = await getToken();
+    var url = '$apiUrl/resources/$id/';
+    final response = await http.put(url,
+        headers: {'content-type': 'application/json'},
+        body: utf8.encode(json.encode(resource.toJson())));
+    return response;
+  }
+
+  Future sendResource(Resource resource) async {
+    var token = await getToken();
+    var url = '$apiUrl/resources/';
+    final response = await http.post(url,
+        headers: {'content-type': 'application/json'},
+        body: utf8.encode(json.encode(resource.toJson())));
+    return response;
+  }
+
+  Future sendProviderById({Provider provider, int id}) async {
+    var url = '$apiUrl/providers/$id/';
+    final response = await http.put(url,
+        headers: {'content-type': 'application/json'},
+        body: utf8.encode(json.encode(provider.toJson())));
+    return response;
+  }
+
+  Future sendProvider(Provider provider) async {
+    var token = await getToken();
+    var url = '$apiUrl/providers/';
+    final response = await http.post(url,
+        headers: {'content-type': 'application/json'},
+        body: utf8.encode(json.encode(provider.toJson())));
+    // print(json.encode(utf8.encode(response.bodyBytes.toString())));
+    return response;
+  }
+
+  Future sendProduct(Product product) async {
+    var token = await getToken();
+    var url = '$apiUrl/';
+    final response = await http.post(url,
+        headers: {'Content-Type': 'application/json'},
+        body: utf8.encode(json.encode(product.toJson())));
+    return response;
   }
 
   Future<CompanyResponse> getCompany() async {
@@ -60,7 +211,7 @@ class ApiService {
     return CompanyResponse.fromJson(responseObj);
   }
 
-  Future<ProviderResponse> getProvider() async {
+  Future<ProviderResponse> getProvider({String pageUrl}) async {
     var token = await getToken();
     var url = '$apiUrl/providers/';
     final response = await http
@@ -68,30 +219,6 @@ class ApiService {
     final responseBody = utf8.decode(response.bodyBytes);
     final responseObj = json.decode(responseBody);
     return ProviderResponse.fromJson(responseObj);
-  }
-
-  Future<UserResponse> getUser() async {
-    String username = 'admin';
-    String password = 'adminadmin';
-    String basicAuth =
-        'Basic ' + base64Encode(utf8.encode('$username:$password'));
-    print(basicAuth);
-    var url = "$apiUrl/user/";
-    final response = await http
-        .get(url, headers: <String, String>{'authorization': basicAuth});
-    final responseBody = utf8.decode(response.bodyBytes);
-    final responseObj = json.decode(responseBody);
-    return UserResponse.fromJson(responseObj);
-  }
-
-  Future<ManufactureResponse> getManufacture() async {
-    var token = await getToken();
-    var url = "$apiUrl/manufacturer_warehouse/";
-    final response = await http
-        .get(url, headers: {HttpHeaders.authorizationHeader: 'JWT $token'});
-    final responseBody = utf8.decode(response.bodyBytes);
-    final responseObj = json.decode(responseBody);
-    return ManufactureResponse.fromJson(responseObj);
   }
 
   Future<ProductResponse> getProducts() async {
@@ -102,16 +229,6 @@ class ApiService {
     final responseBody = utf8.decode(response.bodyBytes);
     final responseObj = json.decode(responseBody);
     return ProductResponse.fromJson(responseObj);
-  }
-
-  Future<EstimateItemResponse> getEstimateItem() async {
-    var token = await getToken();
-    var url = "$apiUrl/estimate-item/";
-    final response = await http
-        .get(url, headers: {HttpHeaders.authorizationHeader: 'JWT $token'});
-    final responseBody = utf8.decode(response.bodyBytes);
-    final responseObj = json.decode(responseBody);
-    return EstimateItemResponse.fromJson(responseObj);
   }
 
   Future<OutlayCategoryResponse> getOutlayCategory() async {
@@ -134,6 +251,30 @@ class ApiService {
     return OutlayItemResponse.fromJson(responseObj);
   }
 
+  Future<List<EstimateResource>> getEstimateResourcesById(int id) async {
+    var token = await getToken();
+    var url = "$apiUrl/estimate-resource/";
+    final response = await http
+        .get(url, headers: {HttpHeaders.authorizationHeader: 'JWT $token'});
+    final responseBody = utf8.decode(response.bodyBytes);
+    final responseObj = json.decode(responseBody);
+    var tmp = EstimateResourceResponse.fromJson(responseObj);
+    tmp.results.removeWhere((element) => element.estimate != id);
+    return tmp.results;
+  }
+
+  Future<List<EstimateItem>> getEstimateItemById(int id) async {
+    var token = await getToken();
+    var url = "$apiUrl/estimate-item/";
+    final response = await http
+        .get(url, headers: {HttpHeaders.authorizationHeader: 'JWT $token'});
+    final responseBody = utf8.decode(response.bodyBytes);
+    final responseObj = json.decode(responseBody);
+    var tmp = EstimateItemResponse.fromJson(responseObj);
+    tmp.results.removeWhere((element) => element.estimate != id);
+    return tmp.results;
+  }
+
   Future<EstimateResourceResponse> getEstimateResources() async {
     var token = await getToken();
     var url = "$apiUrl/estimate-resource/";
@@ -142,6 +283,16 @@ class ApiService {
     final responseBody = utf8.decode(response.bodyBytes);
     final responseObj = json.decode(responseBody);
     return EstimateResourceResponse.fromJson(responseObj);
+  }
+
+  Future<EstimateItemResponse> getEstimateItem() async {
+    var token = await getToken();
+    var url = "$apiUrl/estimate-item/";
+    final response = await http
+        .get(url, headers: {HttpHeaders.authorizationHeader: 'JWT $token'});
+    final responseBody = utf8.decode(response.bodyBytes);
+    final responseObj = json.decode(responseBody);
+    return EstimateItemResponse.fromJson(responseObj);
   }
 
   Future<ResourceResponse> getResource() async {
@@ -162,5 +313,12 @@ class ApiService {
     final responseBody = utf8.decode(response.bodyBytes);
     final responseObj = json.decode(responseBody);
     return EstimateResponse.fromJson(responseObj);
+  }
+
+  Future deleteOutlayItem(int id) async {
+    var token = await getToken();
+    var url = '$apiUrl/outlay-item/$id/';
+    final response = http.delete(url);
+    return response;
   }
 }

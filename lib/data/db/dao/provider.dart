@@ -14,4 +14,7 @@ abstract class ProviderDao {
 
   @Insert(onConflict: OnConflictStrategy.replace)
   Future<List<int>> insertProviders(List<Provider> providers);
+
+  @Query('DELETE FROM Provider')
+  Future<void> deleteAllProviders();
 }

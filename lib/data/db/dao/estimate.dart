@@ -14,4 +14,7 @@ abstract class EstimateDao {
 
   @Insert(onConflict: OnConflictStrategy.replace)
   Future<List<int>> insertEstimates(List<Estimate> estimates);
+
+  @Query('DELETE FROM Estimate')
+  Future<void> deleteAllEstimates();
 }

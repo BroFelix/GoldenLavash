@@ -10,37 +10,33 @@ dependencies:
   flutter:
     sdk: flutter
   http: any
+  barcode_scan: any
+  geolocator: ^6.0.0
+  pattern_formatter: ^1.0.2
+  firebase_messaging: ^7.0.0
   flutter_launcher_icons: ^0.7.5
   flutter_screenutil: ^2.3.0
-  shared_preferences: ^0.5.8
+  shared_preferences: ^0.5.10
   validators: ^2.0.0+1
   search_widget: ^1.0.2
   mask_text_input_formatter: ^1.0.7
   autocomplete_textfield: ^1.6.4
-  flutter_bloc: ^6.0.1
-  bloc: ^6.0.2
-  rxdart: ^0.22.0
-  intl: ^0.15.8
+  intl: ^0.16.0
   equatable: ^1.2.4
   cupertino_icons: ^0.1.3
   floor: ^0.14.0
   meta: ^1.1.8
   uuid: ^2.1.0
-  authentication_repository:
-    path: packages/authentication_repository
-  user_repository:
-    path: packages/user_repository
 
 dev_dependencies:
   flutter_test:
     sdk: flutter
   floor_generator: ^0.14.0
   build_runner: ^1.10.2
-  bloc_test: ^7.0.0
   mockito: ^4.1.1
 
 flutter_icons:
-  image_path: 'assets/images/app_icon.png'
+  image_path: 'images/icon.png'
   android: true
   ios: true
 

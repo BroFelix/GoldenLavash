@@ -1,6 +1,8 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:golden_app/common/function/get_user.dart';
+import 'package:golden_app/resources/values/colors.dart';
 import 'package:golden_app/screens/home/home.dart';
 import 'package:golden_app/services/auth/auth.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -15,35 +17,25 @@ class _LoginBodyScreenState extends State<LoginBodyScreen> {
   AuthService _authService = AuthService();
   String username;
   String password;
-
-//  int _buttonState = 0; // 0 - initial, 1 - loading
+  int _buttonState = 0; // 0 - initial, 1 - loading
   var checkingLogin = true;
 
-  @override
-  void initState() {
-    String token;
-    SharedPreferences.getInstance().then((prefs) {
-      token = prefs.getString("token") ?? null;
-      if (token == null || token == "") {
-        setState(() {
-          checkingLogin = false;
-        });
-      } else {
-        Navigator.of(context).pushReplacementNamed(HomeScreen.route);
-        _authService.getUser(context).then((response) {
-          if (response == null) {
-            setState(() {
-              checkingLogin = false;
-            });
-          } else {
-            Navigator.of(context).pushReplacementNamed(HomeScreen.route);
-          }
-        }).catchError((error) {
-          checkingLogin = false;
-        });
-      }
-    });
-    super.initState();
+  Widget setUpButtonChild() {
+    if (_buttonState == 0) {
+      return new Text(
+        "Войти",
+        style: TextStyle(
+          color: Colors.white,
+          fontSize: ScreenUtil().setSp(24),
+        ),
+      );
+    } else if (_buttonState == 1) {
+      return CircularProgressIndicator(
+        valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
+      );
+    } else {
+      return Icon(Icons.check, color: Colors.white);
+    }
   }
 
   Widget _getForm() {
@@ -56,6 +48,7 @@ class _LoginBodyScreenState extends State<LoginBodyScreen> {
             width: ScreenUtil().setWidth(256),
             child: Image.asset('images/logo.png'),
           ),
+          SizedBox(height: ScreenUtil().setHeight(24)),
           Container(
             margin: EdgeInsets.symmetric(
               horizontal: ScreenUtil().setSp(64),
@@ -73,12 +66,15 @@ class _LoginBodyScreenState extends State<LoginBodyScreen> {
                     },
                     validator: (String value) {
                       if (value.isEmpty) {
-                        return 'Enter the login';
+                        return 'Введите логин';
                       }
                       return null;
                     },
                     decoration: InputDecoration(
-                      labelText: 'Login',
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(10),
+                      ),
+                      labelText: 'Логин',
                     ),
                   ),
                   SizedBox(height: ScreenUtil().setHeight(24)),
@@ -90,40 +86,64 @@ class _LoginBodyScreenState extends State<LoginBodyScreen> {
                       }
                     },
                     validator: (String value) {
-                      if (value.length < 4) {
-                        return 'Error';
+                      if (value.isEmpty) {
+                        return 'Введите пароль ';
                       }
                       return null;
                     },
                     decoration: InputDecoration(
-                      labelText: 'Password',
+                      border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(10)),
+                      labelText: 'Пароль',
                     ),
                   ),
                 ],
               ),
             ),
           ),
-          RaisedButton(
-            color: Colors.lightBlue,
-            child: Text(
-              'Вход',
-              style: TextStyle(color: Colors.white),
-            ),
+          MaterialButton(
+            height: ScreenUtil().setHeight(64),
+            color: AppColors.buttonColor,
+            textColor: Colors.white,
+            minWidth: ScreenUtil().setWidth(200),
+            padding: EdgeInsets.all(16),
+            child: setUpButtonChild(),
             onPressed: () {
-              if (_formKey.currentState.validate()) {
+              if (_formKey.currentState.validate() && _buttonState == 0) {
+                print('$username, $password');
+                setState(() {
+                  _buttonState = 1;
+                });
                 _formKey.currentState.save();
                 _authService
                     .login(context, username, password)
                     .then((response) {
+                  setState(() {
+                    _buttonState = 0;
+                  });
                   if (response != null) {
                     Scaffold.of(context).showSnackBar(
-                        SnackBar(content: Text('Sign in done!!!')));
-                    Navigator.of(context)
-                        .pushReplacementNamed(HomeScreen.route);
+                        SnackBar(content: Text('Вход выполнен!')));
+                    _authService.getUser(context).then((response) {
+                      Navigator.of(context)
+                          .pushReplacementNamed(HomeScreen.route);
+                    }).catchError((error) {
+                      setState(() {
+                        checkingLogin = false;
+                      });
+                    });
                   } else {
-                    Scaffold.of(context)
-                        .showSnackBar(SnackBar(content: Text('Wrong data!!!')));
+                    Scaffold.of(context).showSnackBar(SnackBar(
+                      content: Text('Неправильные данные входа!'),
+                    ));
                   }
+                }).catchError((error) {
+                  setState(() {
+                    _buttonState = 0;
+                  });
+                  Scaffold.of(context).showSnackBar(SnackBar(
+                    content: Text("Ошибка во время входа! повторите снова"),
+                  ));
                 });
               }
             },
@@ -134,9 +154,36 @@ class _LoginBodyScreenState extends State<LoginBodyScreen> {
   }
 
   @override
+  void initState() {
+    String token;
+    SharedPreferences.getInstance().then((prefs) {
+      token = prefs.getString("token") ?? null;
+      if (token == null || token == "") {
+        setState(() {
+          checkingLogin = false;
+        });
+      } else {
+        Navigator.of(context).pushReplacementNamed(HomeScreen.route);
+        getUser().then((user) {
+          if (user == null) {
+            setState(() {
+              checkingLogin = false;
+            });
+          } else {
+            Navigator.of(context).pushReplacementNamed(HomeScreen.route);
+          }
+        }).catchError((error) {
+          checkingLogin = false;
+        });
+      }
+    });
+    super.initState();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Center(
-      child: checkingLogin ? CircularProgressIndicator() : _getForm(),
+      child: _getForm(),
     );
   }
 }

@@ -14,4 +14,7 @@ abstract class ProductDao {
 
   @Insert(onConflict: OnConflictStrategy.replace)
   Future<List<int>> insertProducts(List<Product> products);
+
+  @Query('DELETE FROM Product')
+  Future<void> deleteAllProducts();
 }

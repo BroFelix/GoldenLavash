@@ -14,4 +14,7 @@ abstract class ResourceDao {
 
   @Insert(onConflict: OnConflictStrategy.replace)
   Future<List<int>> insertResources(List<Resource> resources);
+
+  @Query('DELETE FROM Resource')
+  Future<void> deleteAllResources();
 }
