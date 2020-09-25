@@ -17,4 +17,10 @@ abstract class ResourceDao {
 
   @Query('DELETE FROM Resource')
   Future<void> deleteAllResources();
+
+  @transaction
+  Future<void> replaceResources(List<Resource> resources) async {
+    await deleteAllResources();
+    await insertResources(resources);
+  }
 }

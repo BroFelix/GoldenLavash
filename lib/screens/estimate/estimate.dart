@@ -5,8 +5,8 @@ import 'package:golden_app/data/db/database.dart';
 import 'package:golden_app/model/estimate.dart';
 import 'package:golden_app/resources/values/colors.dart';
 import 'package:golden_app/resources/values/styles.dart';
-import 'file:///C:/Users/Farrukh/Android/golden_app/lib/screens/estimate/components/add_estimate.dart';
-import 'file:///C:/Users/Farrukh/Android/golden_app/lib/screens/estimate/components/edit_estimate.dart';
+import 'package:golden_app/screens/estimate/components/add_estimate.dart';
+import 'package:golden_app/screens/estimate/components/edit_estimate.dart';
 
 class EstimatePage extends StatefulWidget {
   static const route = '/estimate';
@@ -18,8 +18,6 @@ class EstimatePage extends StatefulWidget {
 class _EstimatePageState extends State<EstimatePage> {
   List<Estimate> estimateResponse = [];
   EstimateDataSource estimateDataSource;
-
-  // var formatter = NumberFormat('#,###.#');
 
   @override
   void initState() {
@@ -52,6 +50,8 @@ class _EstimatePageState extends State<EstimatePage> {
 
   @override
   Widget build(BuildContext context) {
+    ScreenUtil.init(context, width: 750, height: 1334);
+
     return Scaffold(
       appBar: AppBar(
         title: Text('Закупки'),
@@ -73,10 +73,7 @@ class _EstimatePageState extends State<EstimatePage> {
                 Navigator.of(context).push(MaterialPageRoute(
                     builder: (BuildContext context) =>
                         AddEstimatePage(onSubmit: (int statusCode) {
-                          if (statusCode == 200)
-                            setState(() {
-                              getEstimateData();
-                            });
+                          if (statusCode == 200) getEstimateData();
                         }),
                     fullscreenDialog: true));
               },
@@ -104,12 +101,6 @@ class _EstimatePageState extends State<EstimatePage> {
             )),
             DataColumn(
                 label: Text(
-              'Номер/док.',
-              style: AppStyles.tableTextStyle
-                  .copyWith(fontSize: ScreenUtil().setSp(20)),
-            )),
-            DataColumn(
-                label: Text(
               'Статус',
               style: AppStyles.tableTextStyle
                   .copyWith(fontSize: ScreenUtil().setSp(20)),
@@ -129,11 +120,15 @@ class _EstimatePageState extends State<EstimatePage> {
 
 class EstimateDataSource extends DataTableSource {
   final List<Estimate> _results;
-  final context;
+  BuildContext context;
   int _resultsSize = 0;
   int _selectedCount = 0;
 
-  EstimateDataSource(this.context, this._results, this._resultsSize);
+  EstimateDataSource(
+    this.context,
+    this._results,
+    this._resultsSize,
+  );
 
   // void _sort<T>(Comparable<T> getField(Estimate d), bool ascending) {
   //   _results.sort((Estimate a, Estimate b) {
@@ -189,7 +184,7 @@ class EstimateDataSource extends DataTableSource {
       index: index,
       cells: [
         DataCell(Text(
-          e.id.toString(),
+          e.docNumb.toString(),
           style: AppStyles.tableTextStyle
               .copyWith(fontSize: ScreenUtil().setSp(20)),
         )),
@@ -200,16 +195,17 @@ class EstimateDataSource extends DataTableSource {
                 .copyWith(fontSize: ScreenUtil().setSp(20)),
           ),
         ),
-        DataCell(Text(
-          e.docNumb.toString(),
-          style: AppStyles.tableTextStyle
-              .copyWith(fontSize: ScreenUtil().setSp(20)),
-        )),
-        DataCell(Text(
-          e.status.toString(),
-          style: AppStyles.tableTextStyle
-              .copyWith(fontSize: ScreenUtil().setSp(20)),
-        )),
+        DataCell(e.status == 1
+            ? Icon(
+                Icons.fiber_new_outlined,
+                color: Colors.green,
+              )
+            : e.status == 2
+                ? Icon(Icons.play_arrow_rounded)
+                : Icon(
+                    Icons.done,
+                    color: Colors.green,
+                  )),
         DataCell(
           PopupMenuButton(
             onSelected: (String value) {

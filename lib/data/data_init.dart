@@ -8,7 +8,7 @@ import 'package:golden_app/data/db/model/outlay_item.dart';
 import 'package:golden_app/data/db/model/product.dart';
 import 'package:golden_app/data/db/model/provider.dart';
 import 'package:golden_app/data/db/model/resource.dart';
-import 'package:golden_app/services/api/api.dart';
+import 'file:///C:/Users/Farrukh/Android/golden_app/lib/services/api.dart';
 
 import 'db/model/estimate_item.dart';
 
@@ -49,7 +49,7 @@ class DataInitialisator {
     var product = await api.getProducts();
     List<Product> products = [];
     product.results.forEach((e) => products.add(Product.fromJson(e.toJson())));
-    return await db.productDao.insertProducts(products);
+    return await db.productDao.insertProducts (products);
   }
 
   Future populateProvider() async {
@@ -87,7 +87,8 @@ class DataInitialisator {
     var outlayCat = await api.getOutlayCategory();
     List<OutlayCategory> outlayCats = [];
     outlayCat.results.forEach(
-        (element) => outlayCats.add(OutlayCategory.fromJson(element.toJson())));
+            (element) =>
+            outlayCats.add(OutlayCategory.fromJson(element.toJson())));
     return await db.outlayCategoryDao.insertAllOutlayCategories(outlayCats);
   }
 

@@ -45,8 +45,29 @@ class _HomeDrawerScreenState extends State<HomeDrawerScreen> {
               height: ScreenUtil().setHeight(72),
               width: ScreenUtil().setWidth(72),
               child: Image.asset('images/icon.png'),
+            ), accountEmail: null,
+          ),
+          ListTile(
+            title: Text(
+              'Закупки',
+              style: AppStyles.drawerTextStyle
+                  .copyWith(fontSize: ScreenUtil().setSp(24)),
             ),
-            accountEmail: widget.user.email,
+            onTap: () {
+              // Navigator.of(context).pop();
+              Navigator.of(context).pushNamed(EstimatePage.route);
+            },
+          ),
+          ListTile(
+            title: Text(
+              'Поставщики',
+              style: AppStyles.drawerTextStyle
+                  .copyWith(fontSize: ScreenUtil().setSp(24)),
+            ),
+            onTap: () {
+              // Navigator.of(context).pop();
+              Navigator.of(context).pushNamed(ProviderPage.route);
+            },
           ),
           ListTile(
             title: Text(
@@ -57,8 +78,6 @@ class _HomeDrawerScreenState extends State<HomeDrawerScreen> {
             onTap: () {
               // Navigator.of(context).pop();
               Navigator.of(context).pushNamed(OutlayPage.route);
-              // widget.onPressed('outlay');
-              // widget.bloc.add(HomeGoToOutlayEvent());
             },
           ),
           ExpansionTile(
@@ -73,8 +92,6 @@ class _HomeDrawerScreenState extends State<HomeDrawerScreen> {
                 onTap: () {
                   // Navigator.of(context).pop();
                   Navigator.of(context).pushNamed(ResourceKitchenPage.route);
-                  // widget.onPressed('resource_kitchen');
-                  // widget.bloc.add(HomeGoToResourceEvent());
                 },
               ),
               ListTile(
@@ -82,36 +99,9 @@ class _HomeDrawerScreenState extends State<HomeDrawerScreen> {
                 onTap: () {
                   // Navigator.pop(context);
                   Navigator.of(context).pushNamed(ResourcePartsPage.route);
-                  // widget.onPressed('resource_parts');
                 },
               ),
             ],
-          ),
-          ListTile(
-            title: Text(
-              'Закупки',
-              style: AppStyles.drawerTextStyle
-                  .copyWith(fontSize: ScreenUtil().setSp(24)),
-            ),
-            onTap: () {
-              // Navigator.of(context).pop();
-              Navigator.of(context).pushNamed(EstimatePage.route);
-              // widget.onPressed('estimate');
-              // widget.bloc.add(HomeGoToEstimateEvent());
-            },
-          ),
-          ListTile(
-            title: Text(
-              'Поставщики',
-              style: AppStyles.drawerTextStyle
-                  .copyWith(fontSize: ScreenUtil().setSp(24)),
-            ),
-            onTap: () {
-              // Navigator.of(context).pop();
-              Navigator.of(context).pushNamed(ProviderPage.route);
-              // widget.onPressed('provider');
-              // widget.bloc.add(HomeGoToProviderEvent());
-            },
           ),
           widget.user != null
               ? widget.user.userType == 'admin'
@@ -133,7 +123,7 @@ class _HomeDrawerScreenState extends State<HomeDrawerScreen> {
               : Container(),
           Divider(
             height: 1.0,
-            color: Colors.black,
+            color: Colors.grey,
           ),
           ListTile(
             title: Text(
@@ -150,7 +140,6 @@ class _HomeDrawerScreenState extends State<HomeDrawerScreen> {
                         actions: <Widget>[
                           new FlatButton(
                               onPressed: () async {
-                                // var prefs = await SharedPreferences.getInstance();
                                 await saveLogout();
                                 Navigator.of(context).pop();
                                 Navigator.of(context)

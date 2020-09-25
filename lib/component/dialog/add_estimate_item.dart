@@ -15,7 +15,7 @@ import 'package:golden_app/model/provider.dart' as prov;
 import 'package:golden_app/model/user.dart';
 import 'package:golden_app/resources/values/colors.dart';
 import 'package:golden_app/resources/values/styles.dart';
-import 'package:golden_app/services/api/api.dart';
+import 'file:///C:/Users/Farrukh/Android/golden_app/lib/services/api.dart';
 import 'package:http/http.dart' as http;
 import 'package:intl/intl.dart';
 import 'package:mask_text_input_formatter/mask_text_input_formatter.dart';
@@ -41,11 +41,9 @@ class AddOutlayDialog extends StatefulWidget {
 }
 
 class _AddOutlayDialogState extends State<AddOutlayDialog> {
-  GlobalKey<AutoCompleteTextFieldState<String>> Gkey1 = new GlobalKey();
   GlobalKey<AutoCompleteTextFieldState<String>> Gkey2 = new GlobalKey();
   GlobalKey<AutoCompleteTextFieldState<String>> Gkey3 = new GlobalKey();
 
-  TextEditingController _categoryController = new TextEditingController();
   TextEditingController _outlayController = new TextEditingController();
   TextEditingController _providerController = new TextEditingController();
   TextEditingController _countController = new TextEditingController();
@@ -55,7 +53,6 @@ class _AddOutlayDialogState extends State<AddOutlayDialog> {
 
   _AddOutlayDialogState();
 
-  var category;
   var outlayItem;
   var count;
   var price;
@@ -75,17 +72,19 @@ class _AddOutlayDialogState extends State<AddOutlayDialog> {
 
   @override
   Widget build(BuildContext context) {
+    List<String> suggestions = widget.outlayItems.map((e) => e.title).toList();
+
     return Dialog(
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
       child: Container(
-        height: ScreenUtil().setHeight(990),
+        // height: ScreenUtil().setHeight(1000),
         width: ScreenUtil().setWidth(600),
         padding: EdgeInsets.only(bottom: ScreenUtil().setHeight(24)),
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
             Container(
-              margin: EdgeInsets.only(bottom: ScreenUtil().setHeight(24)),
+              margin: EdgeInsets.only(bottom: ScreenUtil().setHeight(12)),
               decoration: BoxDecoration(
                 color: AppColors.dialogTitleColor,
                 borderRadius: BorderRadius.only(
@@ -101,7 +100,7 @@ class _AddOutlayDialogState extends State<AddOutlayDialog> {
                         left: ScreenUtil().setWidth(24),
                         top: ScreenUtil().setHeight(12)),
                     child: Text(
-                      'Добавить Outlay',
+                      'Добавить расход',
                       textAlign: TextAlign.center,
                       style: AppStyles.dialogTitle
                           .copyWith(fontSize: ScreenUtil().setSp(24)),
@@ -110,61 +109,45 @@ class _AddOutlayDialogState extends State<AddOutlayDialog> {
                 ],
               ),
             ),
-            Padding(
-              padding: EdgeInsets.only(
-                  left: ScreenUtil().setWidth(24),
-                  right: ScreenUtil().setWidth(24),
-                  bottom: ScreenUtil().setHeight(24)),
-              child: AutoCompleteTextField<String>(
-                controller: _categoryController,
+            Container(
+              // height: ScreenUtil().setHeight(128),
+              margin: EdgeInsets.only(
+                  top: ScreenUtil().setHeight(12),
+                  bottom: ScreenUtil().setHeight(8)),
+              padding:
+                  EdgeInsets.symmetric(horizontal: ScreenUtil().setWidth(24)),
+              child: DropdownButtonFormField<OutlayCategory>(
+                isExpanded: true,
                 decoration: InputDecoration(
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(15),
-                  ),
-//                    contentPadding: EdgeInsets.fromLTRB(10.0, 30.0, 10.0, 20.0),
-                  labelText: 'Категория',
-                  // hintStyle: TextStyle(color: Colors.black),
-                ),
-                itemSubmitted: (item) {
-                  category =
-                      widget.outlayCategory.firstWhere((e) => e.title == item);
-                  setState(() => _categoryController.text = item);
-                },
-                clearOnSubmit: false,
-                key: Gkey1,
-                suggestions: widget.outlayCategory.map((e) => e.title).toList(),
-                itemBuilder: (context, item) {
-                  return Container(
-                    padding: EdgeInsets.only(left: ScreenUtil().setWidth(24)),
-                    height: ScreenUtil().setHeight(100),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.start,
-                      children: <Widget>[
-                        Text(
-                          item,
-                          style: TextStyle(fontSize: ScreenUtil().setSp(24)),
-                        ),
-                      ],
-                    ),
-                  );
-                },
-                itemSorter: (a, b) {
-                  return a.compareTo(b);
-                },
-                itemFilter: (item, query) {
-                  return item.toLowerCase().contains(query.toLowerCase());
+                    labelText: 'Категория',
+                    border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(10))),
+                items: widget.outlayCategory
+                    .map((e) => DropdownMenuItem<OutlayCategory>(
+                          value: e,
+                          child: Text(e.title),
+                        ))
+                    .toList(),
+                onChanged: (value) {
+                  setState(() {
+                    suggestions = widget.outlayItems
+                        .where((e) => e.outlayCategory == value.id)
+                        .map((e) => e.title)
+                        .toList();
+                    Gkey2.currentState.suggestions = suggestions;
+                  });
                 },
               ),
             ),
-            Padding(
-              padding: EdgeInsets.only(
-                  left: ScreenUtil().setWidth(24),
-                  right: ScreenUtil().setWidth(24),
-                  bottom: ScreenUtil().setHeight(24)),
+            Container(
+              // height: ScreenUtil().setHeight(128),
+              margin: EdgeInsets.symmetric(vertical: ScreenUtil().setHeight(8)),
+              padding:
+                  EdgeInsets.symmetric(horizontal: ScreenUtil().setWidth(24)),
               child: AutoCompleteTextField<String>(
                 decoration: InputDecoration(
                   border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(15),
+                    borderRadius: BorderRadius.circular(10),
                   ),
 //                    contentPadding: EdgeInsets.fromLTRB(10.0, 30.0, 10.0, 20.0),
                   labelText: 'Причина',
@@ -176,7 +159,7 @@ class _AddOutlayDialogState extends State<AddOutlayDialog> {
                 },
                 clearOnSubmit: false,
                 key: Gkey2,
-                suggestions: widget.outlayItems.map((e) => e.title).toList(),
+                suggestions: suggestions,
                 itemBuilder: (context, item) {
                   return Container(
                     padding: EdgeInsets.only(left: ScreenUtil().setWidth(24)),
@@ -200,59 +183,65 @@ class _AddOutlayDialogState extends State<AddOutlayDialog> {
                 },
               ),
             ),
-            Padding(
-              padding: EdgeInsets.only(
-                  left: ScreenUtil().setWidth(24),
-                  right: ScreenUtil().setWidth(24),
-                  bottom: ScreenUtil().setHeight(24)),
-              child: TextField(
-                inputFormatters: [
-                  FilteringTextInputFormatter.allow(RegExp(r'[0-9]')),
-                ],
-                onSubmitted: (value) {
-                  count = toInt(value);
-                },
-                controller: _countController,
-                keyboardType: TextInputType.number,
-                decoration: InputDecoration(
-                  labelText: 'Количество',
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(15),
-                  ),
-                ),
-              ),
-            ),
             Container(
-              padding: EdgeInsets.only(
-                  left: ScreenUtil().setWidth(24),
-                  right: ScreenUtil().setWidth(24),
-                  bottom: ScreenUtil().setHeight(24)),
-              child: TextField(
-                inputFormatters: [
-                  FilteringTextInputFormatter.allow(RegExp(r'[0-9]')),
-                ],
-                onSubmitted: (value) {
-                  count = toInt(value);
-                },
-                controller: _priceController,
-                keyboardType: TextInputType.number,
-                decoration: InputDecoration(
-                  labelText: 'Цена за единицу',
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(15),
-                  ),
-                ),
-              ),
-            ),
-            Container(
-              margin: EdgeInsets.only(
-                  left: ScreenUtil().setWidth(24),
-                  right: ScreenUtil().setWidth(24),
-                  bottom: ScreenUtil().setHeight(24)),
+              margin: EdgeInsets.symmetric(vertical: ScreenUtil().setHeight(8)),
+              padding:
+                  EdgeInsets.symmetric(horizontal: ScreenUtil().setWidth(24)),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  Container(
+                  SizedBox(
+                    // height: ScreenUtil().setHeight(128),
+                    width: ScreenUtil().setWidth(250),
+                    child: TextField(
+                      inputFormatters: [
+                        FilteringTextInputFormatter.allow(RegExp(r'[0-9]')),
+                      ],
+                      onSubmitted: (value) {
+                        count = toInt(value);
+                      },
+                      controller: _countController,
+                      keyboardType: TextInputType.number,
+                      decoration: InputDecoration(
+                        labelText: 'Количество',
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(10),
+                        ),
+                      ),
+                    ),
+                  ),
+                  SizedBox(
+                    // height: ScreenUtil().setHeight(128),
+                    width: ScreenUtil().setWidth(250),
+                    child: TextField(
+                      inputFormatters: [
+                        FilteringTextInputFormatter.allow(RegExp(r'[0-9]')),
+                      ],
+                      onSubmitted: (value) {
+                        count = toInt(value);
+                      },
+                      controller: _priceController,
+                      keyboardType: TextInputType.number,
+                      decoration: InputDecoration(
+                        labelText: 'Цена за единицу',
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(10),
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            Container(
+              margin: EdgeInsets.symmetric(vertical: ScreenUtil().setHeight(8)),
+              padding:
+                  EdgeInsets.symmetric(horizontal: ScreenUtil().setWidth(24)),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  SizedBox(
+                    // height: ScreenUtil().setHeight(128),
                     width: ScreenUtil().setWidth(250),
                     child: TextField(
                       keyboardType: TextInputType.number,
@@ -263,7 +252,8 @@ class _AddOutlayDialogState extends State<AddOutlayDialog> {
                               borderRadius: BorderRadius.circular(10))),
                     ),
                   ),
-                  Container(
+                  SizedBox(
+                    // height: ScreenUtil().setHeight(128),
                     width: ScreenUtil().setWidth(250),
                     child: TextField(
                       keyboardType: TextInputType.number,
@@ -278,18 +268,17 @@ class _AddOutlayDialogState extends State<AddOutlayDialog> {
               ),
             ),
             Container(
-              height: ScreenUtil().setHeight(128),
-              padding: EdgeInsets.only(
-                  left: ScreenUtil().setWidth(24),
-                  right: ScreenUtil().setWidth(24),
-                  bottom: ScreenUtil().setHeight(24)),
+              // height: ScreenUtil().setHeight(128),
+              margin: EdgeInsets.only(top:ScreenUtil().setHeight(8),bottom: ScreenUtil().setHeight(24)),
+              padding:
+                  EdgeInsets.symmetric(horizontal: ScreenUtil().setWidth(24)),
               child: AutoCompleteTextField<String>(
                 controller: _providerController,
                 style: TextStyle(
                     color: Colors.black, fontSize: ScreenUtil().setSp(24)),
                 decoration: new InputDecoration(
                   border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(15),
+                    borderRadius: BorderRadius.circular(10),
                   ),
 //                    contentPadding: EdgeInsets.fromLTRB(10.0, 30.0, 10.0, 20.0),
                   labelText: 'Поставщик',
@@ -330,15 +319,14 @@ class _AddOutlayDialogState extends State<AddOutlayDialog> {
               height: 1,
               color: Colors.black,
             ),
-            Container(
-              padding: EdgeInsets.only(bottom: ScreenUtil().setHeight(24)),
-              margin: EdgeInsets.only(top: ScreenUtil().setHeight(24)),
+            Padding(
+              padding: EdgeInsets.symmetric(vertical: ScreenUtil().setHeight(12)),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.end,
                 children: [
                   Container(
-                    height: ScreenUtil().setHeight(64),
-                    width: ScreenUtil().setWidth(170),
+                    // height: ScreenUtil().setHeight(64),
+                    width: ScreenUtil().setWidth(180),
                     margin: EdgeInsets.only(
                         right: ScreenUtil().setWidth(24),
                         top: ScreenUtil().setHeight(16)),
@@ -360,8 +348,8 @@ class _AddOutlayDialogState extends State<AddOutlayDialog> {
                     margin: EdgeInsets.only(
                         top: ScreenUtil().setHeight(16),
                         right: ScreenUtil().setWidth(24)),
-                    height: ScreenUtil().setHeight(64),
-                    width: ScreenUtil().setWidth(170),
+                    // height: ScreenUtil().setHeight(64),
+                    width: ScreenUtil().setWidth(180),
                     child: RaisedButton(
                       textColor: Colors.white,
                       color: AppColors.buttonColor,
@@ -372,13 +360,21 @@ class _AddOutlayDialogState extends State<AddOutlayDialog> {
                             .copyWith(fontSize: ScreenUtil().setSp(24)),
                       ),
                       onPressed: () {
-                        // print(_countController.text);
-                        // print(_priceController.text);
-                        var count = toInt(_countController.text);
-                        var price = toInt(_priceController.text);
-                        var priceUsd = _priceUsdController.text!=""? toDouble(_priceUsdController.text): 0;
-                        var rate = _rateController.text!=""? toInt(_rateController.text): 0;
-                        // print(count * price);
+                        print(_countController.text);
+                        print(_priceController.text);
+                        var count = _countController.text != ''
+                            ? toInt(_countController.text)
+                            : 0;
+                        var price = _priceController.text != ''
+                            ? toInt(_priceController.text)
+                            : 0;
+                        var priceUsd = _priceUsdController.text != ""
+                            ? toDouble(_priceUsdController.text)
+                            : 0.0;
+                        var rate = _rateController.text != ""
+                            ? toInt(_rateController.text)
+                            : 0;
+                        print(count * price);
                         int calc = (count * price).floor();
                         final estimateItem = new EstimateItem(
                           amount: calc,

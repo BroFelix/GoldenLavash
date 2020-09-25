@@ -17,4 +17,10 @@ abstract class ProviderDao {
 
   @Query('DELETE FROM Provider')
   Future<void> deleteAllProviders();
+
+  @transaction
+  Future<void> replaceProviders(List<Provider> providers) async {
+    await deleteAllProviders();
+    await insertProviders(providers);
+  }
 }

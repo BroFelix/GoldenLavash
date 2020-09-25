@@ -18,8 +18,12 @@ abstract class OutlayItemDao {
   @Insert(onConflict: OnConflictStrategy.replace)
   Future<List<int>> insertAllOutlayItems(List<OutlayItem> items);
 
-  // @delete()
-
   @Query('DELETE FROM OutlayItem')
   Future<void> deleteAllOutlayItems();
+
+  @transaction
+  Future<void> replaceOutlayItems(List<OutlayItem> outlayItems) async {
+    await deleteAllOutlayItems();
+    await insertAllOutlayItems(outlayItems);
+  }
 }

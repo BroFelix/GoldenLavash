@@ -10,19 +10,6 @@ import 'package:golden_app/screens/resource/resource_part.dart';
 void main() => runApp(MyApp());
 
 class MyApp extends StatelessWidget {
-
-  // Future<dynamic> myBackgroundMessageHandler(
-  //     Map<String, dynamic> message) async {
-  //   if (message.containsKey('data')) {
-  //     Handle data message
-      // final dynamic data = message['data'];
-    // }
-    // if (message.containsKey('notification')) {
-    //   Handle notification message
-      // final dynamic notification = message['notification'];
-    // }
-  // }
-
   @override
   Widget build(BuildContext context) {
     return MaterialApp(

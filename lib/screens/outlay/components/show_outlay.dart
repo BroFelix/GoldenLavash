@@ -7,7 +7,7 @@ import 'package:golden_app/model/outlay_item.dart';
 import 'package:golden_app/resources/values/colors.dart';
 import 'package:golden_app/resources/values/styles.dart';
 import 'package:golden_app/component/dialog/edit_oulay_item.dart';
-import 'package:golden_app/services/api/api.dart';
+import 'file:///C:/Users/Farrukh/Android/golden_app/lib/services/api.dart';
 
 class ShowOutlayPage extends StatefulWidget {
   final outlay;
@@ -48,43 +48,26 @@ class _ShowOutlayState extends State<ShowOutlayPage> {
           children: [
             Container(
               margin: EdgeInsets.symmetric(
-                  horizontal: ScreenUtil().setWidth(24),
-                  vertical: ScreenUtil().setHeight(24)),
+                  horizontal: ScreenUtil().setWidth(48),
+                  vertical: ScreenUtil().setHeight(32)),
               child: Row(
+                mainAxisAlignment: MainAxisAlignment.start,
                 children: [
-                  Expanded(
-                    child: DataTable(
-                      columns: [
-                        DataColumn(
-                            label: Text(
-                          '№',
-                          style: AppStyles.headerTextStyle
-                              .copyWith(fontSize: ScreenUtil().setSp(22)),
-                        )),
-                        DataColumn(
-                          label: Text(
-                            'Навзвание категории',
-                            style: AppStyles.headerTextStyle
-                                .copyWith(fontSize: ScreenUtil().setSp(22)),
-                          ),
-                        )
-                      ],
-                      rows: [
-                        DataRow(cells: [
-                          DataCell(Text(widget.outlay.id.toString(),
-                              style: AppStyles.contentTextStyle
-                                  .copyWith(fontSize: ScreenUtil().setSp(22)))),
-                          DataCell(
-                            Text(widget.outlay.title,
-                                style: AppStyles.contentTextStyle.copyWith(
-                                    fontSize: ScreenUtil().setSp(22))),
-                          )
-                        ])
-                      ],
-                    ),
+                  Text(
+                    'Категория: ',
+                    style: AppStyles.headerTextStyle
+                        .copyWith(fontSize: ScreenUtil().setSp(24)),
                   ),
+                  Text(widget.outlay.title,
+                      style: AppStyles.contentTextStyle.copyWith(
+                          fontSize: ScreenUtil().setSp(24),
+                          fontWeight: FontWeight.w400)),
                 ],
               ),
+            ),
+            Divider(
+              height: 1.0,
+              color: Colors.grey,
             ),
             Container(
               alignment: Alignment.centerLeft,
@@ -102,28 +85,24 @@ class _ShowOutlayState extends State<ShowOutlayPage> {
                     color: AppColors.buttonColor,
                     textColor: Colors.white,
                     child: Text(
-                      'Добавить расходы',
+                      'Добавить расход',
                       style: AppStyles.buttonTextStyle
                           .copyWith(fontSize: ScreenUtil().setSp(20)),
                     ),
                     onPressed: () {
                       showDialog(
                           context: context,
-                          builder: (context) => AddOutlayItem());
+                          builder: (context) => AddOutlayItem(
+                                category: widget.outlay,
+                                onSubmit: (int statusCode) {
+                                  if (statusCode == 200 || statusCode == 201) {
+                                    getOutlayItems();
+                                  }
+                                },
+                              ));
                     },
                   ),
                 ],
-              ),
-            ),
-            Container(
-              margin: EdgeInsets.only(
-                  left: ScreenUtil().setWidth(24),
-                  top: ScreenUtil().setHeight(24)),
-              alignment: Alignment.centerLeft,
-              child: Text(
-                'Расходы',
-                style: AppStyles.headerTextStyle
-                    .copyWith(fontSize: ScreenUtil().setSp(30)),
               ),
             ),
             Container(
@@ -157,8 +136,26 @@ class _ShowOutlayState extends State<ShowOutlayPage> {
                                       return null;
                                     }
                                     if (value == 'delete') {
-                                      ApiService.getInstance()
-                                          .deleteOutlayItem(e.id);
+                                      Future.sync(() async {
+                                        final response =
+                                            await ApiService.getInstance()
+                                                .deleteOutlayItem(e.id);
+                                        if (response.statusCode == 200 ||
+                                            response.statusCode == 204 ||
+                                            response.statusCode == 404) {
+                                          var db =
+                                              await Floor.instance.database;
+                                          print((await db.outlayItemDao
+                                                  .getAllOutlayItems())
+                                              .length);
+                                          await db.database.delete('OutlayItem',
+                                              where: 'id = ${e.id}');
+                                          print((await db.outlayItemDao
+                                                  .getAllOutlayItems())
+                                              .length);
+                                          getOutlayItems();
+                                        }
+                                      });
                                       return null;
                                     }
                                     return null;

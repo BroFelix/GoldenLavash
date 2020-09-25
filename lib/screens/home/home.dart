@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:golden_app/common/function/get_user.dart';
 import 'package:golden_app/data/data_init.dart';
+import 'package:golden_app/data/db/database.dart';
 import 'package:golden_app/model/user.dart';
 import 'package:golden_app/screens/home/components/drawer.dart';
 
@@ -15,6 +16,7 @@ class HomeScreen extends StatefulWidget {
 
 class _HomeScreenState extends State<HomeScreen> {
   bool dataLoaded = false;
+  User _user;
 
   initData() {
     DataInitialisator.getInstance().then((di) =>
@@ -25,29 +27,19 @@ class _HomeScreenState extends State<HomeScreen> {
                     di.populateResource().then((resource) =>
                         di.populateOutlayCategory().then((category) =>
                             di.populateOutlayItem().then((manufactures) =>
-                                di.populateEstimateResource().then((estRes) {
+                                di.populateEstimateResource()
+                                    .then((estRes) {
                                   di.populateEstimateItem();
-                                  setState(() {
-                                    dataLoaded = true;
-                                  });
-                                }))))))));
+                                   setState(() => dataLoaded = true);
+                                })
+                            )))))));
   }
-
-  User _user;
 
   @override
   void initState() {
     initData();
-    Future.sync(() async {
-      _user = User.fromJson(await getUser());
-      setState(() {});
-    });
+    Future.sync(() async => _user = User.fromJson(await getUser()));
     super.initState();
-  }
-
-  @override
-  void dispose() {
-    super.dispose();
   }
 
   @override
@@ -62,10 +54,24 @@ class _HomeScreenState extends State<HomeScreen> {
           IconButton(
               icon: Icon(Icons.refresh),
               onPressed: () {
-                setState(() {
-                  dataLoaded = false;
+                Future.sync(() async {
+                  var db = await Floor.instance.database;
+                  setState(() {
+                    dataLoaded = false;
+                  });
+                  await db.database.execute('PRAGMA foreign_keys = OFF');
+                  await db.database.delete('Company');
+                  await db.database.delete('Estimate');
+                  await db.database.delete('EstimateItem');
+                  await db.database.delete('EstimateResource');
+                  await db.database.delete('OutlayCategory');
+                  await db.database.delete('OutlayItem');
+                  await db.database.delete('Product');
+                  await db.database.delete('Provider');
+                  await db.database.delete('Resource');
+                  await initData();
+                  await db.database.execute('PRAGMA foreign_keys = ON');
                 });
-                initData();
               }),
         ],
       ),

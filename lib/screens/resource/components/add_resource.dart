@@ -7,8 +7,7 @@ import 'package:golden_app/data/db/database.dart';
 import 'package:golden_app/data/db/model/resource.dart' as resDb;
 import 'package:golden_app/model/resource.dart';
 import 'package:golden_app/resources/values/colors.dart';
-import 'package:golden_app/services/api/api.dart';
-import 'package:validators/sanitizers.dart';
+import 'file:///C:/Users/Farrukh/Android/golden_app/lib/services/api.dart';
 import 'package:http/http.dart' as http;
 
 class AddResourcePage extends StatefulWidget {
@@ -57,20 +56,6 @@ class _AddResourceState extends State<AddResourcePage> {
             ),
           ),
           Container(
-            margin: EdgeInsets.symmetric(
-                horizontal: ScreenUtil().setWidth(24),
-                vertical: ScreenUtil().setHeight(12)),
-            child: TextField(
-              controller: _editTypeController,
-              decoration: InputDecoration(
-                border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(10),
-                ),
-                labelText: 'Edit type',
-              ),
-            ),
-          ),
-          Container(
             margin: EdgeInsets.only(
                 left: ScreenUtil().setWidth(24),
                 right: ScreenUtil().setWidth(24),
@@ -103,7 +88,7 @@ class _AddResourceState extends State<AddResourcePage> {
               onPressed: () {
                 final resource = new Resource(
                   title: _titleController.text,
-                  editType: toInt(_editTypeController.text),
+                  editType: 0,
                   resourceType: resourceType,
                 );
                 Future.sync(() async {

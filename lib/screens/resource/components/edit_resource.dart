@@ -6,8 +6,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:golden_app/data/db/database.dart';
 import 'package:golden_app/model/resource.dart';
 import 'package:golden_app/resources/values/colors.dart';
-import 'package:golden_app/services/api/api.dart';
-import 'package:validators/sanitizers.dart';
+import 'file:///C:/Users/Farrukh/Android/golden_app/lib/services/api.dart';
 import 'package:golden_app/data/db/model/resource.dart' as resDb;
 import 'package:http/http.dart' as http;
 
@@ -25,6 +24,15 @@ class _EditResourcePageState extends State<EditResourcePage> {
   TextEditingController _titleController = TextEditingController();
   TextEditingController _editTypeController = TextEditingController();
   var resourceType;
+
+
+  @override
+  void initState() {
+    _titleController.text = widget.resource.title;
+    _editTypeController.text = widget.resource.editType.toString();
+    resourceType = widget.resource.resourceType;
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -46,20 +54,6 @@ class _EditResourcePageState extends State<EditResourcePage> {
                 border:
                     OutlineInputBorder(borderRadius: BorderRadius.circular(10)),
                 labelText: 'Название',
-              ),
-            ),
-          ),
-          Container(
-            margin: EdgeInsets.symmetric(
-                horizontal: ScreenUtil().setWidth(24),
-                vertical: ScreenUtil().setHeight(12)),
-            child: TextField(
-              keyboardType: TextInputType.number,
-              controller: _editTypeController,
-              decoration: InputDecoration(
-                border:
-                    OutlineInputBorder(borderRadius: BorderRadius.circular(10)),
-                labelText: 'Edit type',
               ),
             ),
           ),
@@ -93,7 +87,7 @@ class _EditResourcePageState extends State<EditResourcePage> {
               onPressed: () {
                 final resource = new Resource(
                   title: _titleController.text,
-                  editType: toInt(_editTypeController.text),
+                  editType: 0,
                   resourceType: resourceType,
                 );
                 Future.sync( () async {

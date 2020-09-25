@@ -15,7 +15,7 @@ import 'package:golden_app/model/resource.dart';
 import 'package:golden_app/model/user.dart';
 import 'package:golden_app/resources/values/colors.dart';
 import 'package:golden_app/resources/values/styles.dart';
-import 'package:golden_app/services/api/api.dart';
+import 'file:///C:/Users/Farrukh/Android/golden_app/lib/services/api.dart';
 import 'package:intl/intl.dart';
 import 'package:pattern_formatter/numeric_formatter.dart';
 import 'package:validators/sanitizers.dart';
@@ -72,14 +72,14 @@ class _AddResourceDialogState extends State<AddResourceDialog> {
     return Dialog(
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
       child: Container(
-        height: ScreenUtil().setHeight(830),
+        // height: ScreenUtil().setHeight(860),
         width: ScreenUtil().setWidth(600),
         margin: EdgeInsets.only(bottom: ScreenUtil().setHeight(24)),
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
             Container(
-              margin: EdgeInsets.only(bottom: ScreenUtil().setHeight(24)),
+              margin: EdgeInsets.only(bottom: ScreenUtil().setHeight(12)),
               decoration: BoxDecoration(
                 color: AppColors.dialogTitleColor,
                 borderRadius: BorderRadius.only(
@@ -105,15 +105,16 @@ class _AddResourceDialogState extends State<AddResourceDialog> {
               ),
             ),
             Padding(
-              padding: EdgeInsets.only(
-                  left: ScreenUtil().setWidth(24),
-                  right: ScreenUtil().setWidth(24),
-                  bottom: ScreenUtil().setHeight(24)),
+              padding: EdgeInsets.symmetric(
+                  horizontal: ScreenUtil().setWidth(24),
+                  vertical: ScreenUtil().setHeight(12)),
+              // height: ScreenUtil().setHeight(128),
+              // padding: EdgeInsets.only(left: ScreenUtil().setWidth(24), right: ScreenUtil().setWidth(24), bottom: ScreenUtil().setHeight(12)),
               child: AutoCompleteTextField<String>(
                 controller: _productController,
                 decoration: new InputDecoration(
                   border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(15),
+                    borderRadius: BorderRadius.circular(10),
                   ),
 //                    contentPadding: EdgeInsets.fromLTRB(10.0, 30.0, 10.0, 20.0),
 
@@ -152,55 +153,58 @@ class _AddResourceDialogState extends State<AddResourceDialog> {
               ),
             ),
             Padding(
-              padding: EdgeInsets.only(
-                  left: ScreenUtil().setWidth(24),
-                  right: ScreenUtil().setWidth(24),
-                  bottom: ScreenUtil().setHeight(24)),
-              child: TextField(
-                inputFormatters: [
-                  FilteringTextInputFormatter.allow(RegExp(r'[0-9]')),
-                  ThousandsFormatter(),
-                ],
-                controller: _countController,
-                keyboardType: TextInputType.number,
-                decoration: InputDecoration(
-                  labelText: 'Количество',
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(15),
-                  ),
-                ),
-              ),
-            ),
-            Padding(
-              padding: EdgeInsets.only(
-                  left: ScreenUtil().setWidth(24),
-                  right: ScreenUtil().setWidth(24),
-                  bottom: ScreenUtil().setHeight(24)),
-              child: TextField(
-                inputFormatters: [
-                  FilteringTextInputFormatter.allow(RegExp(r'[0-9]')),
-                  ThousandsFormatter(),
-                ],
-                controller: _priceController,
-                keyboardType: TextInputType.numberWithOptions(
-                    signed: false, decimal: true),
-                decoration: InputDecoration(
-                  labelText: 'Цена за единицу',
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(15),
-                  ),
-                ),
-              ),
-            ),
-            Container(
-              margin: EdgeInsets.only(
-                  left: ScreenUtil().setWidth(24),
-                  right: ScreenUtil().setWidth(24),
-                  bottom: ScreenUtil().setHeight(24)),
+              padding: EdgeInsets.symmetric(
+                  horizontal: ScreenUtil().setWidth(24),
+                  vertical: ScreenUtil().setHeight(12)),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  Container(
+                  SizedBox(
+                    width: ScreenUtil().setWidth(250),
+                    child: TextField(
+                      inputFormatters: [
+                        FilteringTextInputFormatter.allow(RegExp(r'[0-9]')),
+                        ThousandsFormatter(),
+                      ],
+                      controller: _countController,
+                      keyboardType: TextInputType.number,
+                      decoration: InputDecoration(
+                        labelText: 'Количество',
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(10),
+                        ),
+                      ),
+                    ),
+                  ),
+                  SizedBox(
+                    width: ScreenUtil().setWidth(250),
+                    child: TextField(
+                      inputFormatters: [
+                        FilteringTextInputFormatter.allow(RegExp(r'[0-9]')),
+                        ThousandsFormatter(),
+                      ],
+                      controller: _priceController,
+                      keyboardType: TextInputType.numberWithOptions(
+                          signed: false, decimal: true),
+                      decoration: InputDecoration(
+                        labelText: 'Цена за единицу',
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(10),
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            Padding(
+              padding: EdgeInsets.symmetric(
+                  horizontal: ScreenUtil().setWidth(24),
+                  vertical: ScreenUtil().setHeight(12)),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  SizedBox(
                     width: ScreenUtil().setWidth(250),
                     child: TextField(
                       keyboardType: TextInputType.number,
@@ -211,7 +215,7 @@ class _AddResourceDialogState extends State<AddResourceDialog> {
                               borderRadius: BorderRadius.circular(10))),
                     ),
                   ),
-                  Container(
+                  SizedBox(
                     width: ScreenUtil().setWidth(250),
                     child: TextField(
                       keyboardType: TextInputType.number,
@@ -229,12 +233,15 @@ class _AddResourceDialogState extends State<AddResourceDialog> {
               padding: EdgeInsets.only(
                   left: ScreenUtil().setWidth(24),
                   right: ScreenUtil().setWidth(24),
+                  top: ScreenUtil().setHeight(12),
                   bottom: ScreenUtil().setHeight(24)),
+              // height: ScreenUtil().setHeight(128),
+              // padding: EdgeInsets.only(left: ScreenUtil().setWidth(24), right: ScreenUtil().setWidth(24), bottom: ScreenUtil().setHeight(24)),
               child: AutoCompleteTextField<String>(
                 controller: _providerController,
                 decoration: new InputDecoration(
                   border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(15),
+                    borderRadius: BorderRadius.circular(10),
                   ),
 //                    contentPadding: EdgeInsets.fromLTRB(10.0, 30.0, 10.0, 20.0),
 
@@ -276,14 +283,14 @@ class _AddResourceDialogState extends State<AddResourceDialog> {
               height: 1,
               color: Colors.black,
             ),
-            Container(
-              margin: EdgeInsets.only(top: ScreenUtil().setHeight(24)),
+            Padding(
+              padding: EdgeInsets.symmetric(vertical: ScreenUtil().setHeight(12)),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.end,
                 children: [
                   Container(
-                    height: ScreenUtil().setHeight(64),
-                    width: ScreenUtil().setWidth(170),
+                    // height: ScreenUtil().setHeight(64),
+                    width: ScreenUtil().setWidth(180),
                     margin: EdgeInsets.only(
                         right: ScreenUtil().setWidth(24),
                         top: ScreenUtil().setHeight(16)),
@@ -305,8 +312,8 @@ class _AddResourceDialogState extends State<AddResourceDialog> {
                     margin: EdgeInsets.only(
                         top: ScreenUtil().setHeight(16),
                         right: ScreenUtil().setWidth(24)),
-                    height: ScreenUtil().setHeight(64),
-                    width: ScreenUtil().setWidth(170),
+                    // height: ScreenUtil().setHeight(64),
+                    width: ScreenUtil().setWidth(180),
                     child: RaisedButton(
                       textColor: Colors.white,
                       color: AppColors.buttonColor,
@@ -321,11 +328,15 @@ class _AddResourceDialogState extends State<AddResourceDialog> {
                             .replaceAll(RegExp('[,.]'), '');
                         var countStr = _countController.text
                             .replaceAll(RegExp('[,.]'), '');
-                        var priceUsd = _priceUsdController.text!=""? toDouble(_priceUsdController.text): 0;
-                        var rate = _rateController.text!=""? toInt(_rateController.text): 0;
-                        count = toInt(countStr);
-                        pricePerOne = toInt(priceStr);
-                        // print('$count   $pricePerOne');
+                        var priceUsd = _priceUsdController.text != ""
+                            ? toDouble(_priceUsdController.text)
+                            : 0.0;
+                        var rate = _rateController.text != ""
+                            ? toInt(_rateController.text)
+                            : 0;
+                        count = countStr != '' ? toInt(countStr) : 0;
+                        pricePerOne = priceStr != '' ? toInt(priceStr) : 0;
+                        print('$count   $pricePerOne');
                         final resource = new EstimateResource(
                           amount: pricePerOne * count,
                           sendWarehouse: false,

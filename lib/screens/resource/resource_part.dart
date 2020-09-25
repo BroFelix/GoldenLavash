@@ -5,8 +5,8 @@ import 'package:golden_app/data/db/database.dart';
 import 'package:golden_app/model/resource.dart';
 import 'package:golden_app/resources/values/colors.dart';
 import 'package:golden_app/resources/values/styles.dart';
-import 'file:///C:/Users/Farrukh/Android/golden_app/lib/screens/resource/components/add_resource.dart';
-import 'file:///C:/Users/Farrukh/Android/golden_app/lib/screens/resource/components/edit_resource.dart';
+import 'package:golden_app/screens/resource/components/add_resource.dart';
+import 'package:golden_app/screens/resource/components/edit_resource.dart';
 
 class ResourcePartsPage extends StatefulWidget {
   static const route = '/resource_part';
@@ -39,6 +39,8 @@ class _ResourcePartsPageState extends State<ResourcePartsPage> {
 
   @override
   Widget build(BuildContext context) {
+    ScreenUtil.init(context, width: 750, height: 1334);
+
     return Scaffold(
       appBar: AppBar(
         title: Text('Сырьё запчасти'),

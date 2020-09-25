@@ -5,9 +5,9 @@ import 'package:golden_app/data/db/database.dart';
 import 'package:golden_app/model/outlay_category.dart';
 import 'package:golden_app/resources/values/colors.dart';
 import 'package:golden_app/resources/values/styles.dart';
-import 'file:///C:/Users/Farrukh/Android/golden_app/lib/screens/outlay/components/add_outlay.dart';
-import 'file:///C:/Users/Farrukh/Android/golden_app/lib/screens/outlay/components/edit_outlay.dart';
-import 'file:///C:/Users/Farrukh/Android/golden_app/lib/screens/outlay/components/show_outlay.dart';
+import 'package:golden_app/screens/outlay/components/add_outlay.dart';
+import 'package:golden_app/screens/outlay/components/edit_outlay.dart';
+import 'package:golden_app/screens/outlay/components/show_outlay.dart';
 
 class OutlayPage extends StatefulWidget {
   static const route = '/outlay';
@@ -37,6 +37,8 @@ class _OutlayPageState extends State<OutlayPage> {
 
   @override
   Widget build(BuildContext context) {
+    ScreenUtil.init(context, width: 750, height: 1334);
+
     return Scaffold(
       appBar: AppBar(
         title: Text('Категория расхода'),
@@ -74,9 +76,7 @@ class _OutlayPageState extends State<OutlayPage> {
                                   onSubmitted: (int statusCode) {
                                     if (statusCode == 200 ||
                                         statusCode == 201) {
-                                      setState(() {
-                                        getOutlay();
-                                      });
+                                      getOutlay();
                                     }
                                   },
                                 ),

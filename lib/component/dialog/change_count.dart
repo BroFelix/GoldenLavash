@@ -8,7 +8,7 @@ import 'package:golden_app/data/db/model/estimate_item.dart';
 import 'package:golden_app/data/db/model/estimate_resource.dart';
 import 'package:golden_app/resources/values/colors.dart';
 import 'package:golden_app/resources/values/styles.dart';
-import 'package:golden_app/services/api/api.dart';
+import 'file:///C:/Users/Farrukh/Android/golden_app/lib/services/api.dart';
 import 'package:validators/sanitizers.dart';
 import 'package:http/http.dart' as http;
 
@@ -83,7 +83,7 @@ class ChangeCount extends StatelessWidget {
                 children: [
                   Container(
                     height: ScreenUtil().setHeight(64),
-                    width: ScreenUtil().setWidth(170),
+                    width: ScreenUtil().setWidth(180),
                     margin: EdgeInsets.only(
                         right: ScreenUtil().setWidth(24),
                         top: ScreenUtil().setHeight(16)),
@@ -104,7 +104,7 @@ class ChangeCount extends StatelessWidget {
                         top: ScreenUtil().setHeight(16),
                         right: ScreenUtil().setWidth(24)),
                     height: ScreenUtil().setHeight(64),
-                    width: ScreenUtil().setWidth(170),
+                    width: ScreenUtil().setWidth(180),
                     child: RaisedButton(
                       textColor: Colors.white,
                       color: AppColors.buttonColor,

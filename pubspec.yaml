@@ -32,7 +32,7 @@ dev_dependencies:
   flutter_test:
     sdk: flutter
   floor_generator: ^0.14.0
-  build_runner: ^1.10.2
+  build_runner: ^1.10.0
   mockito: ^4.1.1
 
 flutter_icons:

@@ -228,6 +228,20 @@ class _$CompanyDao extends CompanyDao {
     return _companyInsertionAdapter.insertListAndReturnIds(
         companies, OnConflictStrategy.replace);
   }
+
+  @override
+  Future<void> replaceCompanies(List<Company> companies) async {
+    if (database is sqflite.Transaction) {
+      await super.replaceCompanies(companies);
+    } else {
+      await (database as sqflite.Database)
+          .transaction<void>((transaction) async {
+        final transactionDatabase = _$AppDatabase(changeListener)
+          ..database = transaction;
+        await transactionDatabase.companyDao.replaceCompanies(companies);
+      });
+    }
+  }
 }
 
 class _$EstimateDao extends EstimateDao {
@@ -307,6 +321,20 @@ class _$EstimateDao extends EstimateDao {
     return _estimateInsertionAdapter.insertListAndReturnIds(
         estimates, OnConflictStrategy.replace);
   }
+
+  @override
+  Future<void> replaceEstimates(List<Estimate> estimates) async {
+    if (database is sqflite.Transaction) {
+      await super.replaceEstimates(estimates);
+    } else {
+      await (database as sqflite.Database)
+          .transaction<void>((transaction) async {
+        final transactionDatabase = _$AppDatabase(changeListener)
+          ..database = transaction;
+        await transactionDatabase.estimateDao.replaceEstimates(estimates);
+      });
+    }
+  }
 }
 
 class _$EstimateItemDao extends EstimateItemDao {
@@ -381,6 +409,21 @@ class _$EstimateItemDao extends EstimateItemDao {
   Future<List<int>> insertEstimateItems(List<EstimateItem> estimateItems) {
     return _estimateItemInsertionAdapter.insertListAndReturnIds(
         estimateItems, OnConflictStrategy.replace);
+  }
+
+  @override
+  Future<void> replaceEstimateItems(List<EstimateItem> estimateItems) async {
+    if (database is sqflite.Transaction) {
+      await super.replaceEstimateItems(estimateItems);
+    } else {
+      await (database as sqflite.Database)
+          .transaction<void>((transaction) async {
+        final transactionDatabase = _$AppDatabase(changeListener)
+          ..database = transaction;
+        await transactionDatabase.estimateItemDao
+            .replaceEstimateItems(estimateItems);
+      });
+    }
   }
 }
 
@@ -464,9 +507,26 @@ class _$EstimateResourceDao extends EstimateResourceDao {
   }
 
   @override
-  Future<List<int>> insertEstimateResources(List<EstimateResource> estimates) {
+  Future<List<int>> insertEstimateResources(
+      List<EstimateResource> estimateResources) {
     return _estimateResourceInsertionAdapter.insertListAndReturnIds(
-        estimates, OnConflictStrategy.replace);
+        estimateResources, OnConflictStrategy.replace);
+  }
+
+  @override
+  Future<void> replaceEstimateResources(
+      List<EstimateResource> estimateResources) async {
+    if (database is sqflite.Transaction) {
+      await super.replaceEstimateResources(estimateResources);
+    } else {
+      await (database as sqflite.Database)
+          .transaction<void>((transaction) async {
+        final transactionDatabase = _$AppDatabase(changeListener)
+          ..database = transaction;
+        await transactionDatabase.estimateResourceDao
+            .replaceEstimateResources(estimateResources);
+      });
+    }
   }
 }
 
@@ -528,6 +588,20 @@ class _$ProductDao extends ProductDao {
   Future<List<int>> insertProducts(List<Product> products) {
     return _productInsertionAdapter.insertListAndReturnIds(
         products, OnConflictStrategy.replace);
+  }
+
+  @override
+  Future<void> replaceProducts(List<Product> products) async {
+    if (database is sqflite.Transaction) {
+      await super.replaceProducts(products);
+    } else {
+      await (database as sqflite.Database)
+          .transaction<void>((transaction) async {
+        final transactionDatabase = _$AppDatabase(changeListener)
+          ..database = transaction;
+        await transactionDatabase.productDao.replaceProducts(products);
+      });
+    }
   }
 }
 
@@ -598,6 +672,20 @@ class _$ProviderDao extends ProviderDao {
     return _providerInsertionAdapter.insertListAndReturnIds(
         providers, OnConflictStrategy.replace);
   }
+
+  @override
+  Future<void> replaceProviders(List<Provider> providers) async {
+    if (database is sqflite.Transaction) {
+      await super.replaceProviders(providers);
+    } else {
+      await (database as sqflite.Database)
+          .transaction<void>((transaction) async {
+        final transactionDatabase = _$AppDatabase(changeListener)
+          ..database = transaction;
+        await transactionDatabase.providerDao.replaceProviders(providers);
+      });
+    }
+  }
 }
 
 class _$ResourceDao extends ResourceDao {
@@ -655,6 +743,20 @@ class _$ResourceDao extends ResourceDao {
     return _resourceInsertionAdapter.insertListAndReturnIds(
         resources, OnConflictStrategy.replace);
   }
+
+  @override
+  Future<void> replaceResources(List<Resource> resources) async {
+    if (database is sqflite.Transaction) {
+      await super.replaceResources(resources);
+    } else {
+      await (database as sqflite.Database)
+          .transaction<void>((transaction) async {
+        final transactionDatabase = _$AppDatabase(changeListener)
+          ..database = transaction;
+        await transactionDatabase.resourceDao.replaceResources(resources);
+      });
+    }
+  }
 }
 
 class _$OutlayCategoryDao extends OutlayCategoryDao {
@@ -695,15 +797,32 @@ class _$OutlayCategoryDao extends OutlayCategoryDao {
   }
 
   @override
-  Future<int> insertOutlayCategory(OutlayCategory outlay) {
+  Future<int> insertOutlayCategory(OutlayCategory outlayCategory) {
     return _outlayCategoryInsertionAdapter.insertAndReturnId(
-        outlay, OnConflictStrategy.replace);
+        outlayCategory, OnConflictStrategy.replace);
   }
 
   @override
-  Future<List<int>> insertAllOutlayCategories(List<OutlayCategory> outlays) {
+  Future<List<int>> insertAllOutlayCategories(
+      List<OutlayCategory> outlayCategories) {
     return _outlayCategoryInsertionAdapter.insertListAndReturnIds(
-        outlays, OnConflictStrategy.replace);
+        outlayCategories, OnConflictStrategy.replace);
+  }
+
+  @override
+  Future<void> replaceOutlayCategories(
+      List<OutlayCategory> outlayCategories) async {
+    if (database is sqflite.Transaction) {
+      await super.replaceOutlayCategories(outlayCategories);
+    } else {
+      await (database as sqflite.Database)
+          .transaction<void>((transaction) async {
+        final transactionDatabase = _$AppDatabase(changeListener)
+          ..database = transaction;
+        await transactionDatabase.outlayCategoryDao
+            .replaceOutlayCategories(outlayCategories);
+      });
+    }
   }
 }
 
@@ -767,5 +886,19 @@ class _$OutlayItemDao extends OutlayItemDao {
   Future<List<int>> insertAllOutlayItems(List<OutlayItem> items) {
     return _outlayItemInsertionAdapter.insertListAndReturnIds(
         items, OnConflictStrategy.replace);
+  }
+
+  @override
+  Future<void> replaceOutlayItems(List<OutlayItem> outlayItems) async {
+    if (database is sqflite.Transaction) {
+      await super.replaceOutlayItems(outlayItems);
+    } else {
+      await (database as sqflite.Database)
+          .transaction<void>((transaction) async {
+        final transactionDatabase = _$AppDatabase(changeListener)
+          ..database = transaction;
+        await transactionDatabase.outlayItemDao.replaceOutlayItems(outlayItems);
+      });
+    }
   }
 }

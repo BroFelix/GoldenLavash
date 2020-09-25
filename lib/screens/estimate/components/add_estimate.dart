@@ -10,11 +10,10 @@ import 'package:golden_app/model/estimate.dart';
 import 'package:golden_app/model/user.dart';
 import 'package:golden_app/resources/values/colors.dart';
 import 'package:golden_app/resources/values/styles.dart';
-import 'file:///C:/Users/Farrukh/Android/golden_app/lib/screens/estimate/components/edit_estimate.dart';
+import 'package:golden_app/screens/estimate/components/edit_estimate.dart';
 
-import 'package:golden_app/services/api/api.dart';
+import 'file:///C:/Users/Farrukh/Android/golden_app/lib/services/api.dart';
 import 'package:intl/intl.dart';
-import 'package:http/http.dart' as http;
 
 class AddEstimatePage extends StatefulWidget {
   final Function(int statusCode) onSubmit;
@@ -48,7 +47,7 @@ class _AddEstimatePageState extends State<AddEstimatePage> {
         company: curUser.company,
       );
       Future.sync(() async {
-        http.Response response =
+        final response =
             await ApiService.getInstance().sendEstimate(estimate);
         if (response.statusCode == 200) {
           var item =
@@ -57,13 +56,16 @@ class _AddEstimatePageState extends State<AddEstimatePage> {
           await Floor.instance.database.then((db) {
             db.estimateDao
                 .insertEstimate(estimateDb.Estimate.fromJson(item.toJson()));
-            widget.onSubmit(response.statusCode);
             inserted = true;
           });
           if (inserted) {
+            widget.onSubmit(response.statusCode);
             Navigator.of(context).pushReplacement(MaterialPageRoute(
-                builder: (BuildContext context) =>
-                    EditEstimateScreen(editEstimate: item),
+                builder: (BuildContext context) => EditEstimateScreen(
+                    editEstimate: item,
+                    onSubmit: (inserted) {
+                      if (inserted) widget.onSubmit(200);
+                    }),
                 fullscreenDialog: true));
           } else
             Navigator.pop(context);

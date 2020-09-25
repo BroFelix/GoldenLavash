@@ -7,7 +7,7 @@ import 'package:golden_app/data/db/database.dart';
 import 'package:golden_app/model/outlay_category.dart';
 import 'package:golden_app/resources/values/colors.dart';
 import 'package:golden_app/resources/values/styles.dart';
-import 'package:golden_app/services/api/api.dart';
+import 'file:///C:/Users/Farrukh/Android/golden_app/lib/services/api.dart';
 import 'package:http/http.dart' as http;
 import 'package:golden_app/data/db/model/outlay_category.dart' as categoryDb;
 

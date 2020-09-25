@@ -2,7 +2,7 @@ import 'package:floor/floor.dart';
 import 'package:golden_app/data/db/model/company.dart';
 
 @dao
-abstract class CompanyDao{
+abstract class CompanyDao {
   @Query('SELECT * FROM Company')
   Future<List<Company>> getAllCompanies();
 
@@ -17,4 +17,10 @@ abstract class CompanyDao{
 
   @Query('DELETE FROM Company')
   Future<void> deleteAllCompanies();
+
+  @transaction
+  Future<void> replaceCompanies(List<Company> companies) async {
+    await deleteAllCompanies();
+    await insertCompanies(companies);
+  }
 }

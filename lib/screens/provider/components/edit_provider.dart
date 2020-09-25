@@ -3,12 +3,14 @@ import 'dart:convert';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:golden_app/common/function/get_user.dart';
 import 'package:golden_app/data/db/database.dart';
 import 'package:golden_app/data/db/model/provider.dart' as provDb;
 import 'package:golden_app/model/provider.dart';
+import 'package:golden_app/model/user.dart';
 import 'package:golden_app/resources/values/colors.dart';
 import 'package:golden_app/resources/values/styles.dart';
-import 'package:golden_app/services/api/api.dart';
+import 'file:///C:/Users/Farrukh/Android/golden_app/lib/services/api.dart';
 import 'package:http/http.dart' as http;
 
 class EditProviderPage extends StatefulWidget {
@@ -31,8 +33,11 @@ class _EditProviderState extends State<EditProviderPage> {
 
   bool status = true;
 
+  User _user;
+
   @override
   void initState() {
+    Future.sync(() async => _user = User.fromJson(await getUser()));
     _nameController.text = widget.provider.name;
     _contactController.text = widget.provider.contacts;
     _addressController.text = widget.provider.address;
@@ -44,6 +49,19 @@ class _EditProviderState extends State<EditProviderPage> {
 
   @override
   Widget build(BuildContext context) {
+    _selectDate(BuildContext context) async {
+      final DateTime picked = await showDatePicker(
+        context: context,
+        initialDate: DateTime.now(),
+        firstDate: DateTime(2000),
+        lastDate: DateTime(2025),
+      );
+      if (picked != null)
+        setState(() {
+          _dateController.text = picked.toString().split(' ')[0];
+        });
+    }
+
     return Scaffold(
       appBar: AppBar(
         title: Text('Изменить поставщика'),
@@ -86,6 +104,7 @@ class _EditProviderState extends State<EditProviderPage> {
                   horizontal: ScreenUtil().setWidth(24),
                   vertical: ScreenUtil().setHeight(8)),
               child: TextField(
+                onTap: () => _selectDate(context),
                 controller: _dateController,
                 decoration: InputDecoration(
                   border: OutlineInputBorder(
@@ -166,19 +185,30 @@ class _EditProviderState extends State<EditProviderPage> {
                 textColor: Colors.white,
                 child: Text('Сохранить'),
                 onPressed: () {
+                  var name =
+                  _nameController.text != null ? _nameController.text : '';
+                  var contacts = _contactController.text != null
+                      ? _contactController.text
+                      : '';
+                  var regDate = _dateController.text != null ||
+                      _addressController.text != ''
+                      ? DateTime.tryParse(_dateController.text)
+                      : null;
                   Provider provider = new Provider(
-                    name: _nameController.text,
-                    contacts: _contactController.text,
-                    registerDate: DateTime.parse(_dateController.text),
+                    name: name,
+                    contacts: contacts,
+                    registerUser:_user.id,
+                    // registerDate: regDate,
                     status: status,
                   );
                   Future.sync(() async {
-                    final http.Response response =
-                        await ApiService.getInstance().sendProviderById(
-                            provider: provider, id: widget.provider.id);
+                    final response =
+                    await ApiService.getInstance().sendProviderById(
+                        provider: provider, id: widget.provider.id);
                     if (response.statusCode == 200) {
-                      await Floor.instance.database.then((db) => db.providerDao
-                          .insertProvider(provDb.Provider.fromJson(
+                      await Floor.instance.database.then((db) =>
+                          db.providerDao
+                              .insertProvider(provDb.Provider.fromJson(
                               json.decode(utf8.decode(response.bodyBytes)))));
                       widget.onSubmit(response.statusCode);
                     }

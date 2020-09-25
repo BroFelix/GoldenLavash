@@ -17,4 +17,10 @@ abstract class ProductDao {
 
   @Query('DELETE FROM Product')
   Future<void> deleteAllProducts();
+
+  @transaction
+  Future<void> replaceProducts(List<Product> products) async {
+    await deleteAllProducts();
+    await insertProducts(products);
+  }
 }

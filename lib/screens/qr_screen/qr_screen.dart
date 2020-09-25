@@ -7,7 +7,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:golden_app/model/qr_response.dart';
 import 'package:golden_app/resources/values/styles.dart';
-import 'package:golden_app/services/api/api.dart';
+import 'file:///C:/Users/Farrukh/Android/golden_app/lib/services/api.dart';
 
 class QrScannerPage extends StatefulWidget {
   @override
@@ -79,7 +79,7 @@ class _QrScannerPageState extends State<QrScannerPage> {
       var id = fromJson(json.decode(scanResult.rawContent)).toString();
       response = await ApiService.getInstance()
           .getQRInfo(id);
-      print(response.toJson());
+      // print(response.toJson());
       created = response.created;
       setState(() {});
     });
@@ -88,6 +88,8 @@ class _QrScannerPageState extends State<QrScannerPage> {
 
   @override
   Widget build(BuildContext context) {
+    ScreenUtil.init(context, width: 750, height: 1334);
+
     return Scaffold(
       appBar: AppBar(
         title: Text('О продукте'),

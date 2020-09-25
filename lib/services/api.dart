@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'dart:core';
 import 'dart:io';
+import 'dart:async';
 
 import 'package:golden_app/common/function/get_token.dart';
 import 'package:golden_app/common/function/get_user.dart';
@@ -14,10 +15,11 @@ import 'package:golden_app/model/product.dart';
 import 'package:golden_app/model/provider.dart';
 import 'package:golden_app/model/qr_response.dart';
 import 'package:golden_app/model/resource.dart';
+import 'package:golden_app/model/user.dart';
 import 'package:http/http.dart' as http;
 
 class ApiService {
-  final apiUrl = 'http://192.168.0.107:8001/api/v1';
+  final apiUrl = 'http://192.168.0.115:8001/api/v1';
   final apiUrl1 = 'http://85.143.175.111:1909/api/v1';
 
   ApiService._();
@@ -44,7 +46,7 @@ class ApiService {
 
   Future confirmEstimate(int estimateId, int directorUser) async {
     var token = await getToken();
-    var url = '$apiUrl/estimate/${estimateId}/director_accept/';
+    var url = '$apiUrl/estimate/$estimateId/director_accept/';
     final response = await http.post(
       url,
       headers: {'content-type': 'application/json'},
@@ -54,7 +56,25 @@ class ApiService {
     return response;
   }
 
-  Future sendWarehouse(EstimateResource resource) async {
+  Future cancelEstimateResource(EstimateResource resource) async {
+    var token = await getToken();
+    var url = '$apiUrl/estimate-resource/${resource.id}/';
+    final response = await http.put(url,
+        headers: {'content-type': 'application/json'},
+        body: json.encode(resource.toJson()));
+    return response;
+  }
+
+  Future cancelEstimateItem(EstimateItem item) async {
+    var token = await getToken();
+    var url = '$apiUrl/estimate-resource/${item.id}/';
+    final response = await http.put(url,
+        headers: {'content-type': 'application/json'},
+        body: json.encode(item.toJson()));
+    return response;
+  }
+
+  Future sendWarehouse(EstimateResource resource, User user) async {
     var token = await getToken();
     var url = '$apiUrl/estimate-resource/${resource.id}/income_warehouse/';
     final response = await http.post(
@@ -63,11 +83,12 @@ class ApiService {
       body: utf8.encode(json.encode(<String, String>{
         'count': resource.count.toString(),
         'price': resource.price.toString(),
-        'user': (await getUser()).id,
+        'user': user.id.toString(),
+        'company': resource.company.toString(),
       })),
     );
-    // print(response.statusCode);
-    return response.statusCode;
+    // print(response.body);
+    return response;
   }
 
   Future insertOutlayItem(OutlayItem item) async {
@@ -101,7 +122,7 @@ class ApiService {
 
   Future sendOutlayItem(OutlayItem item) async {
     var token = await getToken();
-    var url = '$apiUrl/outlay-item/';
+    var url = '$apiUrl/outlay-items/';
     final response = await http.post(url,
         headers: {'content-type': 'application/json'},
         body: utf8.encode(json.encode(item.toJson())));
@@ -179,6 +200,7 @@ class ApiService {
     final response = await http.put(url,
         headers: {'content-type': 'application/json'},
         body: utf8.encode(json.encode(provider.toJson())));
+    print('provider response ${response.body}');
     return response;
   }
 
@@ -317,8 +339,9 @@ class ApiService {
 
   Future deleteOutlayItem(int id) async {
     var token = await getToken();
-    var url = '$apiUrl/outlay-item/$id/';
-    final response = http.delete(url);
+    var url = '$apiUrl/outlay-items/$id/';
+    final response = await http.delete(url);
+    print(response.body);
     return response;
   }
 }

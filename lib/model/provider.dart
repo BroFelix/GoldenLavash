@@ -120,7 +120,7 @@ class Provider {
         "id": id,
         "name": name,
         "contacts": contacts,
-        "register_date": registerDate.toIso8601String(),
+        "register_date": registerDate!=null? registerDate.toIso8601String():null,
         "status": status,
         "register_user": registerUser,
         "itn": itn,

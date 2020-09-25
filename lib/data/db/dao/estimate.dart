@@ -17,4 +17,10 @@ abstract class EstimateDao {
 
   @Query('DELETE FROM Estimate')
   Future<void> deleteAllEstimates();
+
+  @transaction
+  Future<void> replaceEstimates(List<Estimate> estimates) async {
+    await deleteAllEstimates();
+    await insertEstimates(estimates);
+  }
 }

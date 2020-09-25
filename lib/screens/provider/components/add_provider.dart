@@ -10,7 +10,7 @@ import 'package:golden_app/model/provider.dart';
 import 'package:golden_app/model/user.dart';
 import 'package:golden_app/resources/values/colors.dart';
 import 'package:golden_app/resources/values/styles.dart';
-import 'package:golden_app/services/api/api.dart';
+import 'file:///C:/Users/Farrukh/Android/golden_app/lib/services/api.dart';
 import 'package:http/http.dart' as http;
 import 'package:golden_app/data/db/model/provider.dart' as dbProv;
 import 'package:geolocator/geolocator.dart';
@@ -40,9 +40,9 @@ class _AddProviderState extends State<AddProviderPage> {
   @override
   void initState() {
     getUser().then((currentUser) => user = User.fromJson(currentUser));
-    // Future.delayed(Duration.zero, () async {
-    //   permission = await checkPermission();
-    // });
+    Future.delayed(Duration.zero, () async {
+      permission = await checkPermission();
+    });
     Future.sync( () async {
       position =
           await getCurrentPosition(desiredAccuracy: LocationAccuracy.high);
@@ -180,7 +180,7 @@ class _AddProviderState extends State<AddProviderPage> {
                       .copyWith(fontSize: ScreenUtil().setSp(24)),
                 ),
                 onPressed: () {
-                  // print(user.id);
+                  print(user.id);
                   Provider provider = new Provider(
                     name: _nameController.text,
                     contacts: _contactController.text,

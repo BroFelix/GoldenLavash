@@ -10,11 +10,18 @@ abstract class OutlayCategoryDao {
   Future<OutlayCategory> getOutlayCategory(int id);
 
   @Insert(onConflict: OnConflictStrategy.replace)
-  Future<int> insertOutlayCategory(OutlayCategory outlay);
+  Future<int> insertOutlayCategory(OutlayCategory outlayCategory);
 
   @Insert(onConflict: OnConflictStrategy.replace)
-  Future<List<int>> insertAllOutlayCategories(List<OutlayCategory> outlays);
+  Future<List<int>> insertAllOutlayCategories(
+      List<OutlayCategory> outlayCategories);
 
   @Query('DELETE FROM OutlayCategory')
   Future<void> deleteAllOutlayCategories();
+
+  @transaction
+  Future<void> replaceOutlayCategories(List<OutlayCategory> outlayCategories) async {
+    await deleteAllOutlayCategories();
+    await insertAllOutlayCategories(outlayCategories);
+  }
 }

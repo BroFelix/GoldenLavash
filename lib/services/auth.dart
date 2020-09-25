@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:io';
 
 import 'package:flutter/widgets.dart';
 import 'package:golden_app/common/function/get_token.dart';
@@ -11,7 +12,7 @@ import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
 
 class AuthService {
-  final apiUrl = 'http://192.168.0.107:8001/api/v1';
+  final apiUrl = 'http://192.168.0.115:8001/api/v1';
   final apiUrl1 = 'http://85.143.175.111:1909/api/v1';
 
   Future<LoginModel> signOut(BuildContext context) async {
@@ -60,6 +61,32 @@ class AuthService {
       print(responseJson);
       await saveCurrentLogin(responseJson);
       return null;
+    }
+  }
+
+  Future<Map<String, dynamic>> registerDevice(
+      BuildContext context,
+      String deviceId,
+      String fcmToken,
+      String type,
+      ) async {
+    final url = "${this.apiUrl}/fcm/devices/";
+    Map<String, String> body = {
+      'device_id': deviceId,
+      'registration_id': fcmToken,
+      'type': type,
+    };
+    final token = await getToken();
+    final response = await http.post(url,
+        body: body,
+        headers: {HttpHeaders.authorizationHeader: '$token'});
+    if (response.statusCode == 200) {
+      var responseBody = utf8.decode(response.bodyBytes);
+      final responseJson = json.decode(responseBody);
+      return responseJson;
+    } else {
+      final responseJson = json.decode(response.body);
+      return responseJson;
     }
   }
 

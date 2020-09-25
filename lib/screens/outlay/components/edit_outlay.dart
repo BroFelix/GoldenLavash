@@ -6,7 +6,7 @@ import 'package:golden_app/data/db/model/outlay_category.dart' as catDb;
 import 'package:golden_app/model/outlay_category.dart';
 import 'package:golden_app/resources/values/colors.dart';
 import 'package:golden_app/resources/values/styles.dart';
-import 'package:golden_app/services/api/api.dart';
+import 'file:///C:/Users/Farrukh/Android/golden_app/lib/services/api.dart';
 
 class EditOutlayPage extends StatefulWidget {
   final outlay;

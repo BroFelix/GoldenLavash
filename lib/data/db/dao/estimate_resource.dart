@@ -2,7 +2,7 @@ import 'package:floor/floor.dart';
 import 'package:golden_app/data/db/model/estimate_resource.dart';
 
 @dao
-abstract class EstimateResourceDao{
+abstract class EstimateResourceDao {
   @Query('SELECT * FROM EstimateResource')
   Future<List<EstimateResource>> getAllEstimateResources();
 
@@ -13,8 +13,16 @@ abstract class EstimateResourceDao{
   Future<int> insertEstimateResource(EstimateResource estimate);
 
   @Insert(onConflict: OnConflictStrategy.replace)
-  Future<List<int>> insertEstimateResources(List<EstimateResource> estimates);
+  Future<List<int>> insertEstimateResources(
+      List<EstimateResource> estimateResources);
 
   @Query('DELETE FROM EstimateResource')
   Future<void> deleteAllEstimateResources();
+
+  @transaction
+  Future<void> replaceEstimateResources(
+      List<EstimateResource> estimateResources) async {
+    await deleteAllEstimateResources();
+    await insertEstimateResources(estimateResources);
+  }
 }
