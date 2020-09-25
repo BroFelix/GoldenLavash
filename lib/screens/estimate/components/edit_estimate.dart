@@ -27,7 +27,7 @@ import 'package:golden_app/model/user.dart';
 import 'package:golden_app/resources/values/colors.dart';
 import 'package:golden_app/resources/values/styles.dart';
 
-import 'file:///C:/Users/Farrukh/Android/golden_app/lib/services/api.dart';
+import 'package:golden_app/services/api.dart';
 
 class EditEstimateScreen extends StatefulWidget {
   final Estimate editEstimate;

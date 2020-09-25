@@ -7,7 +7,7 @@ import 'package:golden_app/data/db/database.dart';
 import 'package:golden_app/data/db/model/resource.dart' as resDb;
 import 'package:golden_app/model/resource.dart';
 import 'package:golden_app/resources/values/colors.dart';
-import 'file:///C:/Users/Farrukh/Android/golden_app/lib/services/api.dart';
+import 'package:golden_app/services/api.dart';
 import 'package:http/http.dart' as http;
 
 class AddResourcePage extends StatefulWidget {

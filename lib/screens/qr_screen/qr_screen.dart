@@ -7,7 +7,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:golden_app/model/qr_response.dart';
 import 'package:golden_app/resources/values/styles.dart';
-import 'file:///C:/Users/Farrukh/Android/golden_app/lib/services/api.dart';
+import 'package:golden_app/services/api.dart';
 
 class QrScannerPage extends StatefulWidget {
   @override

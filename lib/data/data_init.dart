@@ -8,7 +8,7 @@ import 'package:golden_app/data/db/model/outlay_item.dart';
 import 'package:golden_app/data/db/model/product.dart';
 import 'package:golden_app/data/db/model/provider.dart';
 import 'package:golden_app/data/db/model/resource.dart';
-import 'file:///C:/Users/Farrukh/Android/golden_app/lib/services/api.dart';
+import 'package:golden_app/services/api.dart';
 
 import 'db/model/estimate_item.dart';
 

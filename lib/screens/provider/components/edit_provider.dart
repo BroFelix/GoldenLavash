@@ -10,8 +10,7 @@ import 'package:golden_app/model/provider.dart';
 import 'package:golden_app/model/user.dart';
 import 'package:golden_app/resources/values/colors.dart';
 import 'package:golden_app/resources/values/styles.dart';
-import 'file:///C:/Users/Farrukh/Android/golden_app/lib/services/api.dart';
-import 'package:http/http.dart' as http;
+import 'package:golden_app/services/api.dart';
 
 class EditProviderPage extends StatefulWidget {
   final provider;
@@ -186,29 +185,28 @@ class _EditProviderState extends State<EditProviderPage> {
                 child: Text('Сохранить'),
                 onPressed: () {
                   var name =
-                  _nameController.text != null ? _nameController.text : '';
+                      _nameController.text != null ? _nameController.text : '';
                   var contacts = _contactController.text != null
                       ? _contactController.text
                       : '';
                   var regDate = _dateController.text != null ||
-                      _addressController.text != ''
+                          _addressController.text != ''
                       ? DateTime.tryParse(_dateController.text)
                       : null;
                   Provider provider = new Provider(
                     name: name,
                     contacts: contacts,
-                    registerUser:_user.id,
+                    registerUser: _user.id,
                     // registerDate: regDate,
                     status: status,
                   );
                   Future.sync(() async {
-                    final response =
-                    await ApiService.getInstance().sendProviderById(
-                        provider: provider, id: widget.provider.id);
+                    final response = await ApiService.getInstance()
+                        .sendProviderById(
+                            provider: provider, id: widget.provider.id);
                     if (response.statusCode == 200) {
-                      await Floor.instance.database.then((db) =>
-                          db.providerDao
-                              .insertProvider(provDb.Provider.fromJson(
+                      await Floor.instance.database.then((db) => db.providerDao
+                          .insertProvider(provDb.Provider.fromJson(
                               json.decode(utf8.decode(response.bodyBytes)))));
                       widget.onSubmit(response.statusCode);
                     }

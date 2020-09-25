@@ -4,7 +4,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:golden_app/common/function/get_user.dart';
 import 'package:golden_app/resources/values/colors.dart';
 import 'package:golden_app/screens/home/home.dart';
-import 'file:///C:/Users/Farrukh/Android/golden_app/lib/services/auth.dart';
+import 'package:golden_app/services/auth.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class LoginBodyScreen extends StatefulWidget {

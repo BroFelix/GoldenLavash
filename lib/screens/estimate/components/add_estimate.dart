@@ -12,7 +12,7 @@ import 'package:golden_app/resources/values/colors.dart';
 import 'package:golden_app/resources/values/styles.dart';
 import 'package:golden_app/screens/estimate/components/edit_estimate.dart';
 
-import 'file:///C:/Users/Farrukh/Android/golden_app/lib/services/api.dart';
+import 'package:golden_app/services/api.dart';
 import 'package:intl/intl.dart';
 
 class AddEstimatePage extends StatefulWidget {

@@ -7,7 +7,7 @@ import 'package:golden_app/data/db/database.dart';
 import 'package:golden_app/data/db/model/outlay_item.dart' as dbOutlayItem;
 import 'package:golden_app/resources/values/colors.dart';
 import 'package:golden_app/resources/values/styles.dart';
-import 'file:///C:/Users/Farrukh/Android/golden_app/lib/services/api.dart';
+import 'package:golden_app/services/api.dart';
 import 'package:golden_app/model/outlay_item.dart';
 
 class AddOutlayItem extends StatelessWidget {

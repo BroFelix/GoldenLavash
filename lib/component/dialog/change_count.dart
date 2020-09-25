@@ -8,7 +8,7 @@ import 'package:golden_app/data/db/model/estimate_item.dart';
 import 'package:golden_app/data/db/model/estimate_resource.dart';
 import 'package:golden_app/resources/values/colors.dart';
 import 'package:golden_app/resources/values/styles.dart';
-import 'file:///C:/Users/Farrukh/Android/golden_app/lib/services/api.dart';
+import 'package:golden_app/services/api.dart';
 import 'package:validators/sanitizers.dart';
 import 'package:http/http.dart' as http;
 
